@@ -4,36 +4,23 @@
     
     <!-- Change these to match your group and artifact IDs -->
     <groupId>il.ac.bgu.cs.bp</groupId>
-    <artifactId>SampleBPjsProject</artifactId>
+    <artifactId>SampleBPProject</artifactId>
     <!-- / Change these to match your group and artifact IDs -->
     
     <version>0.6-DEV</version>
     <packaging>jar</packaging>
     <properties>
-        <exec.mainClass>il.ac.bgu.cs.bp.samplebpjsproject.HelloWorld</exec.mainClass>
+        <exec.mainClass>il.ac.bgu.cs.bp.samplebpproject.Main</exec.mainClass>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>com.github.bThink-BGU</groupId>
-            <artifactId>StateSpaceMapper</artifactId>
-            <version>0.3.3</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.bThink-BGU</groupId>
-            <artifactId>BPjs-Context</artifactId>
-            <version>0.4.4</version>
+            <artifactId>BPjs</artifactId>
+            <version>0.12.1</version>
         </dependency>
     </dependencies>
 
@@ -59,7 +46,7 @@
             <!-- Making uber jar for easy execution. -->
             <id>uber-jar</id>
             <build>
-                <finalName>BPStateSpaceMapper-${project.version}.uber</finalName>
+                <finalName>SampleBPProject-${project.version}.uber</finalName>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
