@@ -1,0 +1,30 @@
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:status:
+:outfilesuffix: .adoc
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :page_with_curl:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+# SampleBPjsProject
+
+A sample maven project using BPjs. Clone or fork this project to easily start your own prject using BPjs. This project has two files:
+
+* link:src/main/resources/HelloBPjsWorld.js[BPjs "hello world" program].
+* link:src/main/java/il/ac/bgu/cs/bp/samplebpjsproject/HelloWorld.java[Simple "main" class for running `HelloBPjsWorld.js` and emitting its events to stdout].
+
+
+To make the project runnable from the commandline, add this to the `<properties>` node of the `pom.xml` file:
+
+    <exec.mainClass>package.name.goes.here.and.then.ClassName</exec.mainClass>
+
+Then run the application by typing:
+
+    mvn exec:java
+
+## Please keep these:
+* This project uses https://github.com/bThink-BGU/BPjs[BPjs].
+* BPjs uses the Mozilla Rhino Javascript engine. See https://developer.mozilla.org/en-US/docs/Mozilla/Projects/Rhino[project page and source code].
+
