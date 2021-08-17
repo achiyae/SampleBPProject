@@ -1,4 +1,4 @@
-package il.ac.bgu.cs.bp.samplebpjsproject;
+package il.ac.bgu.cs.bp.samplebpproject;
 
 import il.ac.bgu.cs.bp.bpjs.context.ContextBProgram;
 import il.ac.bgu.cs.bp.bpjs.internal.ScriptableUtils;
@@ -22,7 +22,7 @@ import java.util.function.Supplier;
 
 import static java.util.stream.Collectors.joining;
 
-public class HelloWorld {
+public class Main {
   public static void main(String[] args) throws Exception {
     String name = "HotCold";
 

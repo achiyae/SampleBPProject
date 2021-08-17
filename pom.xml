@@ -4,13 +4,13 @@
     
     <!-- Change these to match your group and artifact IDs -->
     <groupId>il.ac.bgu.cs.bp</groupId>
-    <artifactId>SampleBPjsProject</artifactId>
+    <artifactId>SampleBPProject</artifactId>
     <!-- / Change these to match your group and artifact IDs -->
     
     <version>0.6-DEV</version>
     <packaging>jar</packaging>
     <properties>
-        <exec.mainClass>il.ac.bgu.cs.bp.samplebpjsproject.HelloWorld</exec.mainClass>
+        <exec.mainClass>il.ac.bgu.cs.bp.samplebpproject.Main</exec.mainClass>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
@@ -27,7 +27,7 @@
         <dependency>
             <groupId>com.github.bThink-BGU</groupId>
             <artifactId>StateSpaceMapper</artifactId>
-            <version>0.3.3</version>
+            <version>0.3.4</version>
         </dependency>
 
         <dependency>
