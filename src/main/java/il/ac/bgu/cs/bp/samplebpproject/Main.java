@@ -15,8 +15,8 @@ public class Main {
 
     System.out.println("// start");
     // This will load the program file  <Project>/src/main/resources/HelloBPjsWorld.js
-//    BProgram bprog = new ContextBProgram(name + "/dal.js", name + "/bl.js");
-    BProgram bprog = new ResourceBProgram(name+".js");
+    BProgram bprog = new ContextBProgram(name + "/dal.js", name + "/bl.js");
+//    BProgram bprog = new ResourceBProgram(name+".js");
 
     // You can use a different EventSelectionStrategy, for example:
     /* var ess = new PrioritizedBSyncEventSelectionStrategy();
