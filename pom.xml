@@ -59,7 +59,7 @@
             <!-- Making uber jar for easy execution. -->
             <id>uber-jar</id>
             <build>
-                <finalName>${artifactId}-${project.version}.uber</finalName>
+                <finalName>${project.artifactId}-${project.version}.uber</finalName>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>

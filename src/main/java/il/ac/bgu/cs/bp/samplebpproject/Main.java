@@ -1,35 +1,22 @@
 package il.ac.bgu.cs.bp.samplebpproject;
 
 import il.ac.bgu.cs.bp.bpjs.context.ContextBProgram;
-import il.ac.bgu.cs.bp.bpjs.internal.ScriptableUtils;
 import il.ac.bgu.cs.bp.bpjs.model.*;
 import il.ac.bgu.cs.bp.statespacemapper.GenerateAllTracesInspection;
 import il.ac.bgu.cs.bp.statespacemapper.StateSpaceMapper;
 import il.ac.bgu.cs.bp.statespacemapper.exports.DotExporter;
-import org.jgrapht.nio.Attribute;
-import org.jgrapht.nio.DefaultAttribute;
-import org.jgrapht.nio.dot.DOTExporter;
 
-import java.io.IOException;
-import java.io.PrintStream;
-import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.function.Supplier;
-
-import static java.util.stream.Collectors.joining;
 
 public class Main {
   public static void main(String[] args) throws Exception {
-    String name = "HotCold";
+    String name = "DiningPhilosophers";
 
     System.out.println("// start");
     // This will load the program file  <Project>/src/main/resources/HelloBPjsWorld.js
-    BProgram bprog = new ContextBProgram(name + "/dal.js", name + "/bl.js");
+//    BProgram bprog = new ContextBProgram(name + "/dal.js", name + "/bl.js");
+    BProgram bprog = new ResourceBProgram(name+".js");
 
     // You can use a different EventSelectionStrategy, for example:
     /* var ess = new PrioritizedBSyncEventSelectionStrategy();
