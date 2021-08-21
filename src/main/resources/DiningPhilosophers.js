@@ -9,16 +9,22 @@ function sync(stmt, data) {
   return bp.sync(stmt)
 }
 
-const PHILOSOPHER_COUNT = 3;
+const PHILOSOPHER_COUNT = 2
 
-const Take = (i, side) => bp.Event('Take' + i + side)
-const Put = (i, side) => bp.Event('Put' + i + side)
-const AnyTake = (i) => [bp.Event("Take" + i + "R"), bp.Event("Take" + ((i + 1) % PHILOSOPHER_COUNT) + "L")]
-const AnyPut = (i) => [bp.Event("Put" + i + "R"), bp.Event("Put" + ((i + 1) % PHILOSOPHER_COUNT) + "L")]
+const Take = (i, side) => bp.Event('Take', {id: i, side: side})
+const Put = (i, side) => bp.Event('Put', {id: i, side: side})
+const TakeSemaphore = i => bp.Event('TakeSemaphore', i)
+const ReleaseSemaphore = i => bp.Event('ReleaseSemaphore', i)
+const AnyTakeSemaphore = ()=>bp.EventSet('AnyTakeSemaphore', function (e) {
+  return e.name.equals(String('TakeSemaphore'))
+})
+const AnyReleaseSemaphore = ()=>bp.EventSet('AnyReleaseSemaphore', function (e) {
+  return e.name.equals(String('ReleaseSemaphore'))
+})
+const AnyTake = (i) => [Take(i, "R"), Take((i % PHILOSOPHER_COUNT) + 1, "L")]
+const AnyPut = (i) => [Put(i, "R"), Put((i % PHILOSOPHER_COUNT) + 1, "L")]
 
-for (let c = 0; c < PHILOSOPHER_COUNT; c++) {
-  let i = c;
-
+function bt(i) {
   bthread('Stick ' + i, function () {
     while (true) {
       bp.sync({waitFor: AnyTake(i), block: AnyPut(i)});
@@ -31,8 +37,27 @@ for (let c = 0; c < PHILOSOPHER_COUNT; c++) {
       // Request to pick the right stick
       sync({request: Take(i, 'R')});
       sync({request: Take(i, 'L')});
-      sync({request: Put(i, 'R')});
       sync({request: Put(i, 'L')});
+      sync({request: Put(i, 'R')});
+    }
+  })
+
+  bthread('Take semaphore '+i, function () {
+    while (true) {
+      sync({request: TakeSemaphore(i), block: Take(i, 'R')})
+      sync({waitFor: Put(i, 'L')})
+      sync({request: ReleaseSemaphore(i)})
     }
   })
 }
+
+for (let c = 0; c < PHILOSOPHER_COUNT; c++) {
+  bt(c)
+}
+
+bthread('Semaphore', function () {
+  while (true) {
+    sync({waitFor: AnyTakeSemaphore()})
+    sync({waitFor: AnyReleaseSemaphore(), block: AnyTakeSemaphore()})
+  }
+})

@@ -29,9 +29,12 @@ public class Verifier {
               "Edges = {1}\n" +
               "Time = {2}",
           res.getScannedStatesCount(), res.getScannedEdgesCount(), res.getTimeMillies()));
-      if (res.isViolationFound())
+      if (res.isViolationFound()) {
         System.out.println(MessageFormat.format("Found violation: {0}", res.getViolation().get()));
-      else
+        System.out.println(res.getViolation().get().decsribe());
+
+        System.out.println("trace: "+res.getViolation().get().getCounterExampleTrace().getNodes());
+      }else
         System.out.println("No violation found");
     } catch (Exception e) {
       e.printStackTrace();
