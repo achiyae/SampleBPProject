@@ -18,9 +18,9 @@ public class Verifier {
     bprog.setEventSelectionStrategy(ess);
     DfsBProgramVerifier vfr = new DfsBProgramVerifier();
     vfr.setVisitedStateStore(new BProgramSnapshotVisitedStateStore());
-    vfr.setMaxTraceLength(2000);
+    vfr.setMaxTraceLength(4000);
     vfr.setProgressListener(new PrintDfsVerifierListener());
-    vfr.setIterationCountGap(100);
+    vfr.setIterationCountGap(500);
     vfr.setDebugMode(false);
     try {
       var res = vfr.verify(bprog);

@@ -45,7 +45,7 @@ function bt(i) {
   bthread('Take semaphore '+i, function () {
     while (true) {
       sync({request: TakeSemaphore(i), block: Take(i, 'R')})
-      sync({waitFor: Put(i, 'L')})
+      sync({waitFor: Put(i, 'R')})
       sync({request: ReleaseSemaphore(i)})
     }
   })
