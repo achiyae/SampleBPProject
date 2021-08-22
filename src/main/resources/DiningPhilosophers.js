@@ -42,16 +42,16 @@ function bt(i) {
     }
   })
 
-  bthread('Take semaphore '+i, function () {
+  /*bthread('Take semaphore '+i, function () {
     while (true) {
       sync({request: TakeSemaphore(i), block: Take(i, 'R')})
       sync({waitFor: Put(i, 'R')})
       sync({request: ReleaseSemaphore(i)})
     }
-  })
+  })*/
 }
 
-for (let c = 0; c < PHILOSOPHER_COUNT; c++) {
+for (let c = 1; c <= PHILOSOPHER_COUNT; c++) {
   bt(c)
 }
 

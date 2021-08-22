@@ -29,16 +29,16 @@
     </repositories>
 
     <dependencies>
-        <dependency>
-            <groupId>com.github.bthink-bgu</groupId>
-            <artifactId>BPjs</artifactId>
-            <version>0.12.1</version>
-        </dependency>
         <!--<dependency>
             <groupId>com.github.bthink-bgu</groupId>
             <artifactId>BPjs</artifactId>
-            <version>0.12.1-modified-quals</version>
+            <version>0.12.1</version>
         </dependency>-->
+        <dependency>
+            <groupId>com.github.bthink-bgu</groupId>
+            <artifactId>BPjs</artifactId>
+            <version>0.12.1-modified-quals</version>
+        </dependency>
     </dependencies>
 
     <build>
