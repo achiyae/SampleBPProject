@@ -43,57 +43,53 @@ for (let c = 1; c <= PHILOSOPHER_COUNT; c++) {
 }
 
 
-let solution = 1
+// ############  Liveness requirements  ##############
+for (let c = 1; c <= PHILOSOPHER_COUNT; c++) {
+  let i = c
 
-// ############  SOLUTION 1 - Semaphore  ##############
-if (solution === 1) {
-  const TakeSemaphore = i => bp.Event('TakeSemaphore', i)
-  const ReleaseSemaphore = i => bp.Event('ReleaseSemaphore', i)
-  const AnyTakeSemaphore = bp.EventSet('AnyTakeSemaphore', function (e) {
-    return e.name == 'TakeSemaphore'
-  })
-  const AnyReleaseSemaphore = bp.EventSet('AnyReleaseSemaphore', function (e) {
-    return e.name == 'ReleaseSemaphore'
-  })
-
-  bthread('Semaphore', function () {
+  // A taken stick will eventually be released
+  bthread("[](take -> <>put)", function () {
     while (true) {
-      sync({waitFor: AnyTakeSemaphore})
-      sync({waitFor: AnyReleaseSemaphore, block: AnyTakeSemaphore})
+      sync({waitFor: AnyTake(i)});
+      hot(true).sync({waitFor: AnyPut(i)})
     }
   })
 
-  for (let c = 1; c <= PHILOSOPHER_COUNT; c++) {
-    let i = c
-    bthread('Take semaphore ' + i, function () {
-      while (true) {
-        sync({request: TakeSemaphore(i), block: Take(i, 'R')})
-        sync({waitFor: Put(i, 'R')})
-        sync({request: ReleaseSemaphore(i), block: Take(i, 'R')})
-      }
-    })
-  }
+  // A hungry philosopher will eventually eat
+  bthread("NoStarvation", function () {
+    while (true) {
+      hot(true).sync({waitFor: Take(i, 'L')})
+      sync({waitFor: Put(i, 'R')})
+    }
+  })
 }
 
-// ############  SOLUTION 2 - Liveness  ##############
-if (solution === 2) {
-  for (let c = 1; c <= PHILOSOPHER_COUNT; c++) {
-    let i = c
 
-    // A taken stick will eventually be released
-    bthread("[](take -> <>put)", function () {
-      while (true) {
-        sync({waitFor: AnyTake(i)});
-        hot(true).sync({waitFor: AnyPut(i)})
-      }
-    })
+// ############  SOLUTION 1 - Semaphore  ##############
+const TakeSemaphore = i => bp.Event('TakeSemaphore', i)
+const ReleaseSemaphore = i => bp.Event('ReleaseSemaphore', i)
+const AnyTakeSemaphore = bp.EventSet('AnyTakeSemaphore', function (e) {
+  return e.name == 'TakeSemaphore'
+})
+const AnyReleaseSemaphore = bp.EventSet('AnyReleaseSemaphore', function (e) {
+  return e.name == 'ReleaseSemaphore'
+})
 
-    // A hungry philosopher will eventually eat
-    bthread("NoStarvation", function () {
-      while (true) {
-        hot(true).sync({waitFor: Take(i, 'L')})
-        sync({waitFor: Put(i, 'R')})
-      }
-    });
+bthread('Semaphore', function () {
+  while (true) {
+    sync({waitFor: AnyTakeSemaphore})
+    sync({waitFor: AnyReleaseSemaphore, block: AnyTakeSemaphore})
   }
+})
+
+for (let c = 1; c <= PHILOSOPHER_COUNT; c++) {
+  let i = c
+  bthread('Take semaphore ' + i, function () {
+    while (true) {
+      sync({request: TakeSemaphore(i), block: Take(i, 'R')})
+      sync({waitFor: Put(i, 'R')})
+      sync({request: ReleaseSemaphore(i), block: Take(i, 'R')})
+    }
+  })
 }
+
