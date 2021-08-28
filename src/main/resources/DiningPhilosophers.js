@@ -9,22 +9,18 @@ function sync(stmt, data) {
   return bp.sync(stmt)
 }
 
+
+// ############ Basic behaviors ##############
+
 const PHILOSOPHER_COUNT = 2
 
 const Take = (i, side) => bp.Event('Take', {id: i, side: side})
 const Put = (i, side) => bp.Event('Put', {id: i, side: side})
-const TakeSemaphore = i => bp.Event('TakeSemaphore', i)
-const ReleaseSemaphore = i => bp.Event('ReleaseSemaphore', i)
-const AnyTakeSemaphore = ()=>bp.EventSet('AnyTakeSemaphore', function (e) {
-  return e.name.equals(String('TakeSemaphore'))
-})
-const AnyReleaseSemaphore = ()=>bp.EventSet('AnyReleaseSemaphore', function (e) {
-  return e.name.equals(String('ReleaseSemaphore'))
-})
-const AnyTake = (i) => [Take(i, "R"), Take((i % PHILOSOPHER_COUNT) + 1, "L")]
-const AnyPut = (i) => [Put(i, "R"), Put((i % PHILOSOPHER_COUNT) + 1, "L")]
+const AnyTake = i => [Take(i, "R"), Take((i % PHILOSOPHER_COUNT) + 1, "L")]
+const AnyPut = i => [Put(i, "R"), Put((i % PHILOSOPHER_COUNT) + 1, "L")]
 
-function bt(i) {
+for (let c = 1; c <= PHILOSOPHER_COUNT; c++) {
+  let i = c
   bthread('Stick ' + i, function () {
     while (true) {
       bp.sync({waitFor: AnyTake(i), block: AnyPut(i)});
@@ -41,23 +37,34 @@ function bt(i) {
       sync({request: Put(i, 'R')});
     }
   })
-
-  /*bthread('Take semaphore '+i, function () {
-    while (true) {
-      sync({request: TakeSemaphore(i), block: Take(i, 'R')})
-      sync({waitFor: Put(i, 'R')})
-      sync({request: ReleaseSemaphore(i)})
-    }
-  })*/
 }
 
-for (let c = 1; c <= PHILOSOPHER_COUNT; c++) {
-  bt(c)
-}
+
+// ############  SOLUTION 1 - Semaphore  ##############
+
+const TakeSemaphore = i => bp.Event('TakeSemaphore', i)
+const ReleaseSemaphore = i => bp.Event('ReleaseSemaphore', i)
+const AnyTakeSemaphore = bp.EventSet('AnyTakeSemaphore', function (e) {
+  return e.name == 'TakeSemaphore'
+})
+const AnyReleaseSemaphore = bp.EventSet('AnyReleaseSemaphore', function (e) {
+  return e.name == 'ReleaseSemaphore'
+})
 
 bthread('Semaphore', function () {
   while (true) {
-    sync({waitFor: AnyTakeSemaphore()})
-    sync({waitFor: AnyReleaseSemaphore(), block: AnyTakeSemaphore()})
+    sync({waitFor: AnyTakeSemaphore})
+    sync({waitFor: AnyReleaseSemaphore, block: AnyTakeSemaphore})
   }
 })
+
+for (let c = 1; c <= PHILOSOPHER_COUNT; c++) {
+  let i = c
+  bthread('Take semaphore ' + i, function () {
+    while (true) {
+      sync({request: TakeSemaphore(i), block: Take(i, 'R')})
+      sync({waitFor: Put(i, 'R')})
+      sync({request: ReleaseSemaphore(i), block: Take(i, 'R')})
+    }
+  })
+}
