@@ -15,7 +15,7 @@ function hot(isHot) {
 
 // ############ Basic behaviors ##############
 
-const PHILOSOPHER_COUNT = 2
+const PHILOSOPHER_COUNT = 5
 
 const Take = (i, side) => bp.Event('Take', {id: i, side: side})
 const Put = (i, side) => bp.Event('Put', {id: i, side: side})
