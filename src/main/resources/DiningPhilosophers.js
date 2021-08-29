@@ -34,10 +34,10 @@ for (let c = 1; c <= PHILOSOPHER_COUNT; c++) {
   bthread('Philosopher ' + i, function () {
     while (true) {
       // Request to pick the right stick
-      sync({request: Take(i, 'R')});
-      sync({request: Take(i, 'L')});
-      sync({request: Put(i, 'L')});
-      sync({request: Put(i, 'R')});
+      sync({request: [Take(i, 'R'), Take(i, 'L')]});
+      sync({request: [Take(i, 'R'), Take(i, 'L')]});
+      sync({request: [Put(i, 'R'), Put(i, 'L')]});
+      sync({request: [Put(i, 'R'), Put(i, 'L')]});
     }
   })
 }
@@ -86,9 +86,10 @@ for (let c = 1; c <= PHILOSOPHER_COUNT; c++) {
   let i = c
   bthread('Take semaphore ' + i, function () {
     while (true) {
-      sync({request: TakeSemaphore(i), block: Take(i, 'R')})
-      sync({waitFor: Put(i, 'R')})
-      sync({request: ReleaseSemaphore(i), block: Take(i, 'R')})
+      sync({request: TakeSemaphore(i), block: [Take(i, 'R'),Take(i, 'L')]})
+      sync({waitFor: [Put(i, 'R'), Put(i, 'L')]})
+      sync({waitFor: [Put(i, 'R'), Put(i, 'L')]})
+      sync({request: ReleaseSemaphore(i), block: [Take(i, 'R'),Take(i, 'L')]})
     }
   })
 }
