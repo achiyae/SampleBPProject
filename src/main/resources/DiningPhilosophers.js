@@ -15,7 +15,7 @@ function hot(isHot) {
 
 // ############ Basic behaviors ##############
 
-const PHILOSOPHER_COUNT = 5
+const PHILOSOPHER_COUNT = 3
 
 const Take = (i, side) => bp.Event('Take', {id: i, side: side})
 const Put = (i, side) => bp.Event('Put', {id: i, side: side})
@@ -56,12 +56,12 @@ for (let c = 1; c <= PHILOSOPHER_COUNT; c++) {
   })
 
   // A hungry philosopher will eventually eat
-  bthread("NoStarvation", function () {
+  /*bthread("NoStarvation", function () {
     while (true) {
       hot(true).sync({waitFor: Take(i, 'L')})
       sync({waitFor: Put(i, 'R')})
     }
-  })
+  })*/
 }
 
 
@@ -75,6 +75,10 @@ const AnyReleaseSemaphore = bp.EventSet('AnyReleaseSemaphore', function (e) {
   return e.name == 'ReleaseSemaphore'
 })
 
+const AnyPhilosopherAction = i => bp.EventSet('AnyPhilosopherAction ' + i, function (e) {
+  return ['Take', 'Put'].includes(String(e.name)) && e.data.id === i
+})
+
 bthread('Semaphore', function () {
   while (true) {
     sync({waitFor: AnyTakeSemaphore})
@@ -84,12 +88,13 @@ bthread('Semaphore', function () {
 
 for (let c = 1; c <= PHILOSOPHER_COUNT; c++) {
   let i = c
+  let es = AnyPhilosopherAction(i)
   bthread('Take semaphore ' + i, function () {
     while (true) {
-      sync({request: TakeSemaphore(i), block: [Take(i, 'R'),Take(i, 'L')]})
-      sync({waitFor: [Put(i, 'R'), Put(i, 'L')]})
-      sync({waitFor: [Put(i, 'R'), Put(i, 'L')]})
-      sync({request: ReleaseSemaphore(i), block: [Take(i, 'R'),Take(i, 'L')]})
+      sync({request: TakeSemaphore(i), block: es})
+      sync({waitFor: es})
+      sync({waitFor: es})
+      sync({request: ReleaseSemaphore(i), block: es})
     }
   })
 }

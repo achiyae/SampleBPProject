@@ -2,6 +2,7 @@ package il.ac.bgu.cs.bp.samplebpproject;
 
 import il.ac.bgu.cs.bp.bpjs.analysis.BProgramSnapshotVisitedStateStore;
 import il.ac.bgu.cs.bp.bpjs.analysis.DfsBProgramVerifier;
+import il.ac.bgu.cs.bp.bpjs.analysis.ExecutionTraceInspections;
 import il.ac.bgu.cs.bp.bpjs.analysis.listeners.PrintDfsVerifierListener;
 import il.ac.bgu.cs.bp.bpjs.model.BProgram;
 import il.ac.bgu.cs.bp.bpjs.model.ResourceBProgram;
@@ -10,7 +11,7 @@ import il.ac.bgu.cs.bp.bpjs.model.eventselection.PrioritizedBSyncEventSelectionS
 import java.text.MessageFormat;
 
 public class Verifier {
-  public static void main(String[] args) throws Exception {
+  public static void main(String[] args) {
     // This will load the program file  <Project>/src/main/resources/HelloBPjsWorld.js
     final BProgram bprog = new ResourceBProgram("DiningPhilosophers.js");
     var ess = new PrioritizedBSyncEventSelectionStrategy();
@@ -22,6 +23,7 @@ public class Verifier {
     vfr.setProgressListener(new PrintDfsVerifierListener());
     vfr.setIterationCountGap(500);
     vfr.setDebugMode(false);
+    vfr.addInspection(ExecutionTraceInspections.DEADLOCKS);
     try {
       var res = vfr.verify(bprog);
       System.out.println(MessageFormat.format(
