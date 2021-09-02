@@ -18,26 +18,16 @@
 
     <repositories>
         <repository>
-            <id>a. StateMapperRepo</id>
-            <url>https://github.com/bThink-BGU/StateSpaceMapper/raw/repository</url>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-                <checksumPolicy>ignore</checksumPolicy>
-            </releases>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
 
     <dependencies>
-        <!--<dependency>
-            <groupId>com.github.bthink-bgu</groupId>
-            <artifactId>BPjs</artifactId>
-            <version>0.12.1</version>
-        </dependency>-->
         <dependency>
-            <groupId>com.github.bthink-bgu</groupId>
-            <artifactId>BPjs</artifactId>
-            <version>0.12.1-modified-quals</version>
+            <groupId>com.github.bThink-BGU</groupId>
+            <artifactId>StateSpaceMapper</artifactId>
+            <version>0.3.8</version>
         </dependency>
     </dependencies>
 
@@ -63,7 +53,7 @@
             <!-- Making uber jar for easy execution. -->
             <id>uber-jar</id>
             <build>
-                <finalName>${artifactId}-${project.version}.uber</finalName>
+                <finalName>${project.artifactId}-${project.version}.uber</finalName>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
