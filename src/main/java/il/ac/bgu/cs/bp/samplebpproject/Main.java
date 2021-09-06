@@ -13,7 +13,7 @@ import java.util.Map;
 public class Main {
   public static void main(String[] args) throws Exception {
     // This will load the program file  <Project>/src/main/resources/HelloBPjsWorld.js
-    final BProgram bprog = new ResourceBProgram("DiningPhilosophers.js");
+    final BProgram bprog = new ResourceBProgram(args);
     var runName = bprog.getName();
 
     // You can use a different EventSelectionStrategy, for example:
