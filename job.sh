@@ -13,6 +13,6 @@
 ### Start you code below #### 
 module load anaconda ### load anaconda module 
 source activate selenium ### activating Conda environment. Environment must be configured before running the job 
-cd ~/repos/StateSpaceMapper/
+cd ~/repos/SampleBPProject/
 mvn compile 
 mvn exec:java -D"exec.args"="lc_pn_check 4"
