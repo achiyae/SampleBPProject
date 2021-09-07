@@ -14,5 +14,6 @@
 module load anaconda ### load anaconda module 
 source activate selenium ### activating Conda environment. Environment must be configured before running the job 
 cd ~/repos/SampleBPProject/
-mvn compile 
+export MAVEN_OPTS="-Xms240g -Xmx1G -XX:MaxPermSize=256M"
+mvn compile
 mvn exec:java -D"exec.args"="lc_pn_check 4"
