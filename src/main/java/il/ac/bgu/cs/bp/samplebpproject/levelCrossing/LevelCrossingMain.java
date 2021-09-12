@@ -18,6 +18,7 @@ public class LevelCrossingMain {
     var filename = args[0] + ".js";
     var runName = args[0] + "_" + n;
     final BProgram bprog = new ResourceBProgram(filename);
+    bprog.putInGlobalScope("n", n);
 
     // You can use a different EventSelectionStrategy, for example:
     /* var ess = new PrioritizedBSyncEventSelectionStrategy();
