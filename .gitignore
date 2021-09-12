@@ -226,3 +226,4 @@ exports/**
 .classpath
 .project
 .settings/
+.vscode/
