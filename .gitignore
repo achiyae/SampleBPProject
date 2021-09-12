@@ -221,3 +221,8 @@ $RECYCLE.BIN/
 
 graphs/**
 exports/**
+
+# vscode
+.classpath
+.project
+.settings/
