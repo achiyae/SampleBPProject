@@ -1,7 +1,9 @@
 package il.ac.bgu.cs.bp.samplebpproject.levelCrossing;
 
+import il.ac.bgu.cs.bp.bpjs.model.BEvent;
 import il.ac.bgu.cs.bp.bpjs.model.BProgram;
 import il.ac.bgu.cs.bp.bpjs.model.ResourceBProgram;
+import il.ac.bgu.cs.bp.statespacemapper.MapperResult;
 import il.ac.bgu.cs.bp.statespacemapper.StateSpaceMapper;
 import il.ac.bgu.cs.bp.statespacemapper.jgrapht.exports.DotExporter;
 
@@ -40,12 +42,19 @@ public class LevelCrossingMain {
     exporter.export();
 
     System.out.println("// Generating paths...");
-    var paths = res.generatePaths()
+    var allDirectedPathsAlgorithm = res.createAllDirectedPathsBuilder()
+        .setSimplePathsOnly(true)
+        .setIncludeReturningEdgesInSimplePaths(true)
+        .setLongestPathsOnly(false)
+        .build();
+    var graphPaths = allDirectedPathsAlgorithm.getAllPaths();
+    var paths = MapperResult.GraphPaths2BEventPaths(graphPaths)
         .stream()
-        .map(l -> l
-            .stream()
-            .map(e -> e.name)
-            .collect(Collectors.joining(",")))
+        .map(l -> l.stream()
+            .map(BEvent::getName)
+            .collect(Collectors.joining(", ")))
+        .distinct()
+        .sorted()
         .collect(Collectors.joining("\n"));
     Files.writeString(Paths.get(outputDir, runName + ".csv"), paths);
 

@@ -27,7 +27,7 @@
         <dependency>
             <groupId>com.github.bThink-BGU</groupId>
             <artifactId>StateSpaceMapper</artifactId>
-            <version>master-SNAPSHOT</version>
+            <version>0.3.11</version>
         </dependency>
     </dependencies>
 

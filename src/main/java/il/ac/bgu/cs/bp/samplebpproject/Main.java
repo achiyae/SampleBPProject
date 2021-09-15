@@ -1,14 +1,16 @@
 package il.ac.bgu.cs.bp.samplebpproject;
 
+import il.ac.bgu.cs.bp.bpjs.model.BEvent;
 import il.ac.bgu.cs.bp.bpjs.model.BProgram;
 import il.ac.bgu.cs.bp.bpjs.model.ResourceBProgram;
-import il.ac.bgu.cs.bp.statespacemapper.GenerateAllTracesInspection;
+import il.ac.bgu.cs.bp.statespacemapper.MapperResult;
 import il.ac.bgu.cs.bp.statespacemapper.StateSpaceMapper;
 import il.ac.bgu.cs.bp.statespacemapper.jgrapht.exports.DotExporter;
 import org.jgrapht.nio.DefaultAttribute;
 
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Main {
   public static void main(String[] args) throws Exception {
@@ -33,14 +35,32 @@ public class Main {
     );
     exporter.export();
 
-    getAllPaths(res);
+    printAllPaths(res);
 
     System.out.println("// done");
   }
 
-  public static void getAllPaths(GenerateAllTracesInspection.MapperResult res) {
+  /**
+   * Generate all paths. See {@link il.ac.bgu.cs.bp.statespacemapper.jgrapht.AllDirectedPaths} for all the possible algorithm configurations.
+   */
+  public static void printAllPaths(MapperResult res) {
     System.out.println("// Generated paths:");
-    var paths = res.generatePaths();
-    System.out.println(paths);
+
+    var allDirectedPathsAlgorithm = res.createAllDirectedPathsBuilder()
+        .setSimplePathsOnly(true)
+        .setIncludeReturningEdgesInSimplePaths(true)
+        .setLongestPathsOnly(false)
+        .build();
+    var graphPaths = allDirectedPathsAlgorithm.getAllPaths();
+    var eventPaths = MapperResult.GraphPaths2BEventPaths(graphPaths)
+        .stream()
+        .map(l -> l.stream()
+            .map(BEvent::toString)
+            .map(s -> s.replaceAll("\\[BEvent name:([^]]+)\\]", "$1"))
+            .collect(Collectors.joining(", ")))
+        .distinct()
+        .sorted()
+        .collect(Collectors.joining("\n"));
+    System.out.println(eventPaths);
   }
 }
