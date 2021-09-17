@@ -6,6 +6,7 @@ import il.ac.bgu.cs.bp.bpjs.model.ResourceBProgram;
 import il.ac.bgu.cs.bp.statespacemapper.MapperResult;
 import il.ac.bgu.cs.bp.statespacemapper.StateSpaceMapper;
 import il.ac.bgu.cs.bp.statespacemapper.jgrapht.exports.DotExporter;
+import org.jgrapht.nio.DefaultAttribute;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -39,6 +40,9 @@ public class LevelCrossingMain {
     exporter.setVertexAttributeProvider(v -> Map.of()
 //        Map.of("hash", DefaultAttribute.createAttribute(v.hashCode()))
     );
+    exporter.setEdgeAttributeProvider(v-> Map.of(
+        "label", DefaultAttribute.createAttribute(v.event.name)
+    ));
     exporter.export();
 
     System.out.println("// Generating paths...");
