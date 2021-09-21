@@ -1,5 +1,4 @@
 importPackage(Packages.il.ac.bgu.cs.bp.samplebpproject.levelCrossing)
-bp.log.info("typeof " + (typeof n))
 if(typeof n === typeof undefined) {
   n = 1
 }
