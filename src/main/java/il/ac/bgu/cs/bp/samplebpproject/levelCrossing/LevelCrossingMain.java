@@ -23,6 +23,9 @@ public class LevelCrossingMain {
     final BProgram bprog = new ResourceBProgram(filename);
     bprog.putInGlobalScope("n", n);
 
+    System.out.println("Run name: "+ runName);
+    printJVMStats();
+
     // You can use a different EventSelectionStrategy, for example:
     /* var ess = new PrioritizedBSyncEventSelectionStrategy();
     bprog.setEventSelectionStrategy(ess); */
@@ -65,5 +68,24 @@ public class LevelCrossingMain {
     System.out.println("// Writing paths...");
 
     System.out.println("// done");
+  }
+
+  private static void printJVMStats() {
+    System.out.println("Available processors (cores): " +
+        Runtime.getRuntime().availableProcessors());
+
+    /* Total amount of free memory available to the JVM */
+    System.out.println("Free memory (bytes): " +
+        Runtime.getRuntime().freeMemory());
+
+    /* This will return Long.MAX_VALUE if there is no preset limit */
+    long maxMemory = Runtime.getRuntime().maxMemory();
+    /* Maximum amount of memory the JVM will attempt to use */
+    System.out.println("Maximum memory (bytes): " +
+        (maxMemory == Long.MAX_VALUE ? "no limit" : maxMemory));
+
+    /* Total memory currently in use by the JVM */
+    System.out.println("Total memory (bytes): " +
+        Runtime.getRuntime().totalMemory());
   }
 }
