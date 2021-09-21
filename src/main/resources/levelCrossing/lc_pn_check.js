@@ -2,8 +2,7 @@ importPackage(Packages.il.ac.bgu.cs.bp.samplebpproject.levelCrossing)
 if(typeof n === typeof undefined) {
   n = 1
 }
-bp.log.info("n=" + n)
-// const x = [Approaching(0), Entering(0), Leaving(0), 
+// const x = [Approaching(0), Entering(0), Leaving(0),
 //             Approaching(1), Entering(1), Leaving(1),
 //             Approaching(2), Entering(2), Leaving(2),
 //             Approaching(3), Entering(3), Leaving(3), 
