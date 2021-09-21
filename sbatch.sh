@@ -5,6 +5,6 @@ N=1
 
 for file in ${files[@]}; do
   for i in $(seq 1 $N); do
-    sbatch "./job.sh" $file $i
+    sbatch "./job.sh" "levelCrossing/$file" $i
   done
 done
