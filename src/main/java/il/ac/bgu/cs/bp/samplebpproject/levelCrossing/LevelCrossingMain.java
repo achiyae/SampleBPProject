@@ -17,13 +17,14 @@ public class LevelCrossingMain {
   // Program arguments = args[0] = filename without ".js", args[1] = n
   // For example: args = ["levelCrossing/lc_pn_check", "1"]
   public static void main(String[] args) throws Exception {
+    System.out.println("Run name: "+ args[0] +"_"+args[1]);
+
     var n = Integer.parseInt(args[1]);
     var filename = args[0] + ".js";
     var runName = args[0] + "_" + n;
     final BProgram bprog = new ResourceBProgram(filename);
     bprog.putInGlobalScope("n", n);
 
-    System.out.println("Run name: "+ runName);
     printJVMStats();
 
     // You can use a different EventSelectionStrategy, for example:
