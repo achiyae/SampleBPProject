@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 public class LevelCrossingMain {
   // Program arguments = args[0] = filename without ".js", args[1] = n
-  // For example: args = ["levelCrossing/lc_pn_check", "1"]
+  // For example: args = ["lc_pn_check", "1"]
   public static void main(String[] args) throws Exception {
     System.out.println("Run name: "+ args[0] +"_"+args[1]);
 

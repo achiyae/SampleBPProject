@@ -1,8 +1,8 @@
 importPackage(Packages.il.ac.bgu.cs.bp.samplebpproject.levelCrossing)
-if(typeof n === typeof undefined) {
+/*if(typeof n === typeof undefined) {
   n = 1
 }
-bp.log.info("n=" + n)
+bp.log.info("n=" + n)*/
 // const x = [Approaching(0), Entering(0), FaultEntering(0), Leaving(0), 
 //             // Approaching(1), Entering(1), Leaving(1),
 //             // Approaching(2), Entering(2), Leaving(2),
