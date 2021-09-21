@@ -53,7 +53,7 @@ public class LevelCrossingMain {
     var allDirectedPathsAlgorithm = res.createAllDirectedPathsBuilder()
         .setSimplePathsOnly(true)
         .setIncludeReturningEdgesInSimplePaths(true)
-        .setLongestPathsOnly(false)
+        .setLongestPathsOnly(true)
         .build();
     var graphPaths = allDirectedPathsAlgorithm.getAllPaths();
     System.out.println("// Generating paths strings...");
