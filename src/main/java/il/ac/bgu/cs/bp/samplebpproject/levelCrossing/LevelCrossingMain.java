@@ -56,6 +56,7 @@ public class LevelCrossingMain {
         .setLongestPathsOnly(false)
         .build();
     var graphPaths = allDirectedPathsAlgorithm.getAllPaths();
+    System.out.println("// Generating paths strings...");
     var paths = MapperResult.GraphPaths2BEventPaths(graphPaths)
         .stream()
         .map(l -> l.stream()
@@ -64,9 +65,9 @@ public class LevelCrossingMain {
         .distinct()
         .sorted()
         .collect(Collectors.joining("\n"));
-    Files.writeString(Paths.get(outputDir, runName + ".csv"), paths);
 
     System.out.println("// Writing paths...");
+    Files.writeString(Paths.get(outputDir, runName + ".csv"), paths);
 
     System.out.println("// done");
   }
