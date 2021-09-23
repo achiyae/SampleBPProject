@@ -52,7 +52,9 @@ public class LevelCrossingMain {
     exportGraph(outputDir, runName, res);
 
     if (runName.startsWith("lc_pn")) {
+      System.out.println("// Compressing the PN graph");
       res = PNMapperResults.Create(res);
+      System.out.println(res);
       exportGraph(outputDir, runName + "_compressed", res);
     }
 
