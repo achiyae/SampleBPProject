@@ -124,34 +124,29 @@ public class LevelCrossingMain {
       super(graph, startNode, acceptingStates);
     }
 
-    public static PNMapperResults CompressGraph(MapperResult base) {
+    public static PNMapperResults CompressGraph(MapperResult base) throws IOException {
+      var startNode = base.startNode;
       var graph = base.graph;
+//      var i = 0;
       while (true) {
         var edge = graph.edgeSet().parallelStream()
             .filter(e -> List.of("KeepDown", "ClosingRequest", "OpeningRequest").contains(e.event.name))
             .findAny().orElse(null);
         if (edge == null) break;
+        System.out.println("Removing " + edge.event.name);
         var source = graph.getEdgeSource(edge);
         var target = graph.getEdgeTarget(edge);
-        var sourceIn = new ArrayList<>(graph.incomingEdgesOf(source)); //shallow copy to avoid concurrent violation
-        var sourceOut = new ArrayList<>(graph.outgoingEdgesOf(source));
-        for (var e : sourceIn) {
-          var eSource = graph.getEdgeSource(e);
-          // if there is no edge with this event between eSource and target then add it.
-          if (graph.getAllEdges(eSource, target).parallelStream().noneMatch(e1 -> e1.event.equals(e.event)))
-            graph.addEdge(eSource, target, new MapperEdge(e.event));
+        var targetOutEdges = new ArrayList<>(graph.outgoingEdgesOf(target));
+        for (var e : targetOutEdges) {
+          var eTarget = graph.getEdgeTarget(e);
+          if (graph.getAllEdges(source,eTarget).parallelStream().noneMatch(e1 -> e1.event.equals(e.event)))
+            graph.addEdge(source,eTarget, new MapperEdge(e.event));
         }
-        for (var e : sourceOut) {
-          if (e != edge) {
-            var eTarget = graph.getEdgeTarget(e);
-            // if there is no edge with this event between eTarget and target then add it.
-            if (graph.getAllEdges(target, eTarget).parallelStream().noneMatch(e1 -> e1.event.equals(e.event)))
-              graph.addEdge(target, eTarget, new MapperEdge(e.event));
-          }
-        }
-        graph.removeVertex(source);
+        graph.removeEdge(edge);
+//        exportGraph("exports", "log" + i, new PNMapperResults(graph, startNode, graph.vertexSet()));
+//        i++;
       }
-      var startNode = base.startNode;
+      graph.removeAllVertices(graph.vertexSet().stream().filter(v->!v.equals(startNode) && graph.inDegreeOf(v)==0).collect(Collectors.toList()));
       return new PNMapperResults(graph, startNode, graph.vertexSet());
     }
   }
