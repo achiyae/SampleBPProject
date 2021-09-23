@@ -6,14 +6,14 @@
 #SBATCH --output my_job-id-%J.out ### output log for running job - %J is the job number variable
 #SBATCH --mail-user=achiya@bgu.ac.il ### users email for sending job status notifications – replace with yours
 #SBATCH --mail-type=BEGIN,END,FAIL ### conditions when to send the email. ALL,BEGIN,END,FAIL, REQUEU, NONE
-#SBATCH --mem=250G ### total amount of RAM
+#SBATCH --mem=500G ### total amount of RAM
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=50 ##. You may reduce that number to 6 and get double the RAM per thread
+#SBATCH --cpus-per-task=128 ##. You may reduce that number to 6 and get double the RAM per thread
 
 ### Start you code below ####
 module load anaconda ### load anaconda module
 source activate selenium ### activating Conda environment. Environment must be configured before running the job
 cd ~/repos/SampleBPProject/
-export MAVEN_OPTS="-Xms240g -Xmx240g"
+export MAVEN_OPTS="-Xms100g -Xmx500g"
 mvn compile > /dev/null 2>&1
-mvn exec:java -D"exec.args"="$1 $2"
+mvn exec:java -D"exec.args"="$@"

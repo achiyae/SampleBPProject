@@ -14,26 +14,30 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class LevelCrossingMain {
-  // Program arguments = args[0] = filename without ".js", args[1] = n
+  // Program arguments = args[0] = filename without ".js", args[1] = number of railways, args[2] (optional) = max path length
   // For example: args = ["lc_pn_check", "1"]
   public static void main(String[] args) throws Exception {
-    System.out.println("Run name: "+ args[0] +"_"+args[1]);
+    System.out.println("Run name: " + args[0] + "_" + args[1]);
 
-    var n = Integer.parseInt(args[1]);
+    var railways = Integer.parseInt(args[1]);
     var filename = args[0] + ".js";
-    var runName = args[0] + "_" + n;
+    var runName = args[0] + "_R-" + railways;
+    Integer maxPathLength = null;
+    if (args.length == 3) {
+      maxPathLength = Integer.valueOf(args[2]);
+      runName += "_L-" + maxPathLength;
+    }
     final BProgram bprog = new ResourceBProgram(filename);
-    bprog.putInGlobalScope("n", n);
+    bprog.putInGlobalScope("n", railways);
 
     printJVMStats();
 
     // You can use a different EventSelectionStrategy, for example:
     /* var ess = new PrioritizedBSyncEventSelectionStrategy();
     bprog.setEventSelectionStrategy(ess); */
-    var mpr = new StateSpaceMapper();
-
     System.out.println("// Start mapping the states graph");
-    var res = mpr.mapSpace(bprog);
+
+    var res = new StateSpaceMapper().mapSpace(bprog);
     System.out.println("// Completed mapping the states graph");
     System.out.println(res.toString());
 
@@ -44,7 +48,7 @@ public class LevelCrossingMain {
     exporter.setVertexAttributeProvider(v -> Map.of()
 //        Map.of("hash", DefaultAttribute.createAttribute(v.hashCode()))
     );
-    exporter.setEdgeAttributeProvider(v-> Map.of(
+    exporter.setEdgeAttributeProvider(v -> Map.of(
         "label", DefaultAttribute.createAttribute(v.event.name)
     ));
     exporter.export();
@@ -53,7 +57,8 @@ public class LevelCrossingMain {
     var allDirectedPathsAlgorithm = res.createAllDirectedPathsBuilder()
         .setSimplePathsOnly(true)
         .setIncludeReturningEdgesInSimplePaths(true)
-        .setLongestPathsOnly(true)
+        .setLongestPathsOnly(false)
+        .setMaxPathLength(maxPathLength)
         .build();
     var graphPaths = allDirectedPathsAlgorithm.getAllPaths();
     System.out.println("// Generating paths strings...");
