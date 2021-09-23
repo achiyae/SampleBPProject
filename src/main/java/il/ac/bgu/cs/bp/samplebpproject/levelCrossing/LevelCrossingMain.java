@@ -133,7 +133,7 @@ public class LevelCrossingMain {
             .filter(e -> List.of("KeepDown", "ClosingRequest", "OpeningRequest").contains(e.event.name))
             .findAny().orElse(null);
         if (edge == null) break;
-        System.out.println("Removing " + edge.event.name);
+//        System.out.println("Removing " + edge.event.name);
         var source = graph.getEdgeSource(edge);
         var target = graph.getEdgeTarget(edge);
         var sourceInEdges = new ArrayList<>(graph.incomingEdgesOf(source));
@@ -147,7 +147,11 @@ public class LevelCrossingMain {
 //        exportGraph("exports", "log" + i, new PNMapperResults(graph, startNode, graph.vertexSet()));
 //        i++;
       }
-      graph.removeAllVertices(graph.vertexSet().stream().filter(v->!v.equals(startNode) && graph.inDegreeOf(v)==0).collect(Collectors.toList()));
+      while(true) {
+        var zeroInDegree = graph.vertexSet().stream().filter(v -> !v.equals(startNode) && graph.inDegreeOf(v) == 0).collect(Collectors.toList());
+        if(zeroInDegree.isEmpty()) break;
+        graph.removeAllVertices(zeroInDegree);
+      }
       return new PNMapperResults(graph, startNode, graph.vertexSet());
     }
   }
