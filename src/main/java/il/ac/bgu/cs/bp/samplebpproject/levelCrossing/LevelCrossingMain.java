@@ -53,7 +53,7 @@ public class LevelCrossingMain {
 
     if (runName.startsWith("lc_pn")) {
       System.out.println("// Compressing the PN graph");
-      res = PNMapperResults.Create(res);
+      res = PNMapperResults.CompressGraph(res);
       System.out.println(res);
       exportGraph(outputDir, runName + "_compressed", res);
     }
@@ -124,7 +124,7 @@ public class LevelCrossingMain {
       super(graph, startNode, acceptingStates);
     }
 
-    public static PNMapperResults Create(MapperResult base) {
+    public static PNMapperResults CompressGraph(MapperResult base) {
       var graph = base.graph;
       while (true) {
         var edge = graph.edgeSet().parallelStream()
@@ -133,14 +133,13 @@ public class LevelCrossingMain {
         if (edge == null) break;
         var source = graph.getEdgeSource(edge);
         var target = graph.getEdgeTarget(edge);
-        var sourceIn = new ArrayList<>(graph.incomingEdgesOf(source));
+        var sourceIn = new ArrayList<>(graph.incomingEdgesOf(source)); //shallow copy to avoid concurrent violation
         var sourceOut = new ArrayList<>(graph.outgoingEdgesOf(source));
         for (var e : sourceIn) {
           var eSource = graph.getEdgeSource(e);
           // if there is no edge with this event between eSource and target then add it.
           if (graph.getAllEdges(eSource, target).parallelStream().noneMatch(e1 -> e1.event.equals(e.event)))
             graph.addEdge(eSource, target, new MapperEdge(e.event));
-          graph.removeEdge(e);
         }
         for (var e : sourceOut) {
           if (e != edge) {
@@ -149,7 +148,6 @@ public class LevelCrossingMain {
             if (graph.getAllEdges(target, eTarget).parallelStream().noneMatch(e1 -> e1.event.equals(e.event)))
               graph.addEdge(target, eTarget, new MapperEdge(e.event));
           }
-          graph.removeEdge(e);
         }
         graph.removeVertex(source);
       }
