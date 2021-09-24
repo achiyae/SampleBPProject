@@ -67,7 +67,7 @@ public class LevelCrossingMain {
     System.out.println("// Generating paths...");
     var allDirectedPathsAlgorithm = res.createAllDirectedPathsBuilder()
         .setSimplePathsOnly(maxPathLength == null)
-        .setIncludeReturningEdgesInSimplePaths(false)
+        .setIncludeReturningEdgesInSimplePaths(maxPathLength == null)
         .setLongestPathsOnly(false)
         .setMaxPathLength(maxPathLength)
         .build();
@@ -136,11 +136,11 @@ public class LevelCrossingMain {
 //        System.out.println("Removing " + edge.event.name);
         var source = graph.getEdgeSource(edge);
         var target = graph.getEdgeTarget(edge);
-        var sourceInEdges = new ArrayList<>(graph.incomingEdgesOf(source));
-        for (var e : sourceInEdges) {
-          var eSource = graph.getEdgeSource(e);
-          if (graph.getAllEdges(eSource,target).parallelStream().noneMatch(e1 -> e1.event.equals(e.event)))
-            graph.addEdge(eSource,target, new MapperEdge(e.event));
+        var targetOut = new ArrayList<>(graph.outgoingEdgesOf(target));
+        for (var e : targetOut) {
+          var eTarget = graph.getEdgeTarget(e);
+          if (graph.outgoingEdgesOf(source).parallelStream().map(e1->e1.event.name).noneMatch(e1 -> e1.equals(e.event.name)))
+            graph.addEdge(source,eTarget, new MapperEdge(e.event));
         }
         graph.removeEdge(edge);
 //        graph.removeVertex(source); // this line make the graph look like the one in the paper, however it is not correct to do so in all cases...
