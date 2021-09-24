@@ -6,9 +6,9 @@ N=5
 for file in ${files[@]}; do
   for i in $(seq 1 $N); do
     if [ $i -lt 3 ]; then
-      sbatch "./job.sh" $file $i
+      sbatch "./job.sh" "$file" "$i"
     else
-      sbatch "./job.sh" $file $i 14
+      sbatch "./job.sh" "$file" "$i" "14"
     fi
   done
 done

@@ -16,4 +16,5 @@ source activate selenium ### activating Conda environment. Environment must be c
 cd ~/repos/SampleBPProject/
 export MAVEN_OPTS="-Xms100g -Xmx500g"
 mvn compile > /dev/null 2>&1
+echo mvn exec:java -D\"exec.args\"=\"$@\"
 mvn exec:java -D"exec.args"="$@"
