@@ -1,0 +1,13 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------< il.ac.bgu.cs.bp:SampleBPProject >-------------------
+[INFO] Building SampleBPProject 0.6-DEV
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- exec-maven-plugin:3.0.0:java (default-cli) @ SampleBPProject ---
+Run name: lc_pn_1
+Available processors (cores): 128
+Free memory (bytes): 107259995072
+Maximum memory (bytes): 536870912000
+Total memory (bytes): 107374182400
+// Start mapping the states graph

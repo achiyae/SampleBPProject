@@ -1,0 +1,24 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------< il.ac.bgu.cs.bp:SampleBPProject >-------------------
+[INFO] Building SampleBPProject 0.6-DEV
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- exec-maven-plugin:3.0.0:java (default-cli) @ SampleBPProject ---
+Run name: lc_bp_3
+Available processors (cores): 128
+Free memory (bytes): 107227831736
+Maximum memory (bytes): 536870912000
+Total memory (bytes): 107374182400
+// Start mapping the states graph
+// Completed mapping the states graph
+StateMapper stats:
+======================
+# States: 35
+# Events: 11
+# Transition: 101
+# Accepting States: 35
+======================
+
+// Export to GraphViz...
+// Generating paths...
