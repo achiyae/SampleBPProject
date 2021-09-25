@@ -8,12 +8,12 @@ public class FaultEntering extends BEvent{
     public int i;
 
     public FaultEntering(int i){
-        super("FaultEntering"+i);
+        super("FE"+i);
         this.i = i;
     }
 
     public FaultEntering(){
-        super("FaultEntering");
+        super("FE");
         this.i = -1;
     }
 

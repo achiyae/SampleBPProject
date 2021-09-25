@@ -8,12 +8,12 @@ public class KeepDown extends BEvent{
     public int i;
 
     public KeepDown(int i){
-        super("KeepDown"+i);
+        super("KD"+i);
         this.i = i;
     }
 
     public KeepDown(){
-        super("KeepDown");
+        super("KD");
         this.i = -1;
     }
 

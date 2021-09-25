@@ -8,12 +8,12 @@ public class Entering extends BEvent{
     public int i;
 
     public Entering(int i){
-        super("Entering"+i);
+        super("E"+i);
         this.i = i;
     }
 
     public Entering(){
-        super("Entering");
+        super("E");
         this.i = -1;
     }
 

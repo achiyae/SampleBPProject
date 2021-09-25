@@ -6,6 +6,6 @@ import il.ac.bgu.cs.bp.bpjs.model.BEvent;
 public class Lower extends BEvent{
 
     public Lower() {
-        super("Lower");
+        super("Lo");
     }
 }

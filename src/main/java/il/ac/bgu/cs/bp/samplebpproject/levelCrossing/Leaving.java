@@ -8,12 +8,12 @@ public class Leaving extends BEvent{
     public int i;
 
     public Leaving(int i){
-        super("Leaving"+i);
+        super("Le"+i);
         this.i = i;
     }
 
     public Leaving(){
-        super("Leaving");
+        super("Le");
         this.i = -1;
     }
 

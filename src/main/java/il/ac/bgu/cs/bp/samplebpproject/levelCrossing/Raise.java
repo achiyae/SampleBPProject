@@ -6,6 +6,6 @@ import il.ac.bgu.cs.bp.bpjs.model.BEvent;
 public class Raise extends BEvent{
 
     public Raise() {
-        super("Raise");
+        super("R");
     }
 }

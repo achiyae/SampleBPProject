@@ -8,12 +8,12 @@ public class OpeningRequest extends BEvent{
     public int i;
 
     public OpeningRequest(int i){
-        super("OpeningRequest"+i);
+        super("OR"+i);
         this.i = i;
     }
 
     public OpeningRequest(){
-        super("OpeningRequest");
+        super("OR");
         this.i = -1;
     }
 

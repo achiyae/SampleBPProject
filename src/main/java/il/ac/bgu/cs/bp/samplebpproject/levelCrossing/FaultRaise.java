@@ -6,7 +6,7 @@ import il.ac.bgu.cs.bp.bpjs.model.BEvent;
 public class FaultRaise extends BEvent{
 
     public FaultRaise() {
-        super("FaultRaise");
+        super("FR");
     }
 }
 
