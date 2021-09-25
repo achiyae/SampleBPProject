@@ -227,3 +227,6 @@ exports/**
 .project
 .settings/
 .vscode/
+
+# slurm
+*.out
