@@ -12,7 +12,7 @@ import org.jgrapht.Graph;
 import org.jgrapht.nio.DefaultAttribute;
 
 import java.io.IOException;
-import java.nio.file.Files;
+import java.io.PrintWriter;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,19 +72,19 @@ public class LevelCrossingMain {
         .setMaxPathLength(maxPathLength)
         .build();
     var graphPaths = allDirectedPathsAlgorithm.getAllPaths();
-    System.out.println("// Generating paths strings...");
-    var paths = MapperResult.GraphPaths2BEventPaths(graphPaths)
-        .stream()
-        .map(l -> l.stream()
-            .map(BEvent::getName)
-            .filter(s -> !List.of("KeepDown", "ClosingRequest", "OpeningRequest").contains(s))
-            .collect(Collectors.joining(",")))
-        .distinct()
-        .sorted()
-        .collect(Collectors.joining("\n"));
 
     System.out.println("// Writing paths...");
-    Files.writeString(Paths.get(outputDir, csvName), paths);
+    try (PrintWriter writer = new PrintWriter(Paths.get(outputDir, csvName).toString())) {
+      MapperResult.GraphPaths2BEventPaths(graphPaths)
+          .parallelStream()
+          .map(l -> l.stream()
+              .map(BEvent::getName)
+//            .filter(s -> !List.of("KeepDown", "ClosingRequest", "OpeningRequest").contains(s))
+              .collect(Collectors.joining(",")))
+          .distinct()
+          .sorted()
+          .forEachOrdered(writer::println);
+    }
   }
 
   private static void exportGraph(String outputDir, String runName, MapperResult res) throws IOException {
@@ -139,17 +139,17 @@ public class LevelCrossingMain {
         var targetOut = new ArrayList<>(graph.outgoingEdgesOf(target));
         for (var e : targetOut) {
           var eTarget = graph.getEdgeTarget(e);
-          if (graph.outgoingEdgesOf(source).parallelStream().map(e1->e1.event.name).noneMatch(e1 -> e1.equals(e.event.name)))
-            graph.addEdge(source,eTarget, new MapperEdge(e.event));
+          if (graph.outgoingEdgesOf(source).parallelStream().map(e1 -> e1.event.name).noneMatch(e1 -> e1.equals(e.event.name)))
+            graph.addEdge(source, eTarget, new MapperEdge(e.event));
         }
         graph.removeEdge(edge);
 //        graph.removeVertex(source); // this line make the graph look like the one in the paper, however it is not correct to do so in all cases...
 //        exportGraph("exports", "log" + i, new PNMapperResults(graph, startNode, graph.vertexSet()));
 //        i++;
       }
-      while(true) {
+      while (true) {
         var zeroInDegree = graph.vertexSet().stream().filter(v -> !v.equals(startNode) && graph.inDegreeOf(v) == 0).collect(Collectors.toList());
-        if(zeroInDegree.isEmpty()) break;
+        if (zeroInDegree.isEmpty()) break;
         graph.removeAllVertices(zeroInDegree);
       }
       return new PNMapperResults(graph, startNode, graph.vertexSet());
