@@ -61,6 +61,8 @@ public class LevelCrossingMain {
     generatePaths(csvName, maxPathLength, res, outputDir);
 
     System.out.println("// done");
+
+    System.exit(0); // To complete the garbage collection before terminating the program. Solves Maven exceptions.
   }
 
   private static void generatePaths(String csvName, Integer maxPathLength, MapperResult res, String outputDir) throws IOException {
