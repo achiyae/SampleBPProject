@@ -79,19 +79,20 @@ public class LevelCrossingMain {
     var graphPaths = allDirectedPathsAlgorithm.getAllPaths();
 
     System.out.println("// Writing paths...");
-    try (var fos = new FileOutputStream(Paths.get(outputDir, csvName).toString()+".zip");
+    try (var fos = new FileOutputStream(Paths.get(outputDir, csvName) + ".zip");
          var zipOut = new ZipOutputStream(fos)) {
       var zipEntry = new ZipEntry(csvName);
       zipOut.putNextEntry(zipEntry);
+      zipOut.setLevel(9);
       MapperResult.GraphPaths2BEventPaths(graphPaths)
           .parallelStream()
           .map(l -> l.stream()
               .map(BEvent::getName)
 //            .filter(s -> !List.of("KeepDown", "ClosingRequest", "OpeningRequest").contains(s))
-              .collect(Collectors.joining(",","","\n")))
+              .collect(Collectors.joining(",", "", "\n")))
           .distinct()
           .sorted()
-          .forEachOrdered(s-> {
+          .forEachOrdered(s -> {
             try {
               zipOut.write(s.getBytes(StandardCharsets.UTF_8));
             } catch (IOException e) {
