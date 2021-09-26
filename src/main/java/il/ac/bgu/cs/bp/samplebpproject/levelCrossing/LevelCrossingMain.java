@@ -11,14 +11,17 @@ import il.ac.bgu.cs.bp.statespacemapper.jgrapht.exports.DotExporter;
 import org.jgrapht.Graph;
 import org.jgrapht.nio.DefaultAttribute;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public class LevelCrossingMain {
   // Program arguments =
@@ -76,16 +79,25 @@ public class LevelCrossingMain {
     var graphPaths = allDirectedPathsAlgorithm.getAllPaths();
 
     System.out.println("// Writing paths...");
-    try (PrintWriter writer = new PrintWriter(Paths.get(outputDir, csvName).toString())) {
+    try (var fos = new FileOutputStream(Paths.get(outputDir, csvName).toString()+".zip");
+         var zipOut = new ZipOutputStream(fos)) {
+      var zipEntry = new ZipEntry(csvName);
+      zipOut.putNextEntry(zipEntry);
       MapperResult.GraphPaths2BEventPaths(graphPaths)
           .parallelStream()
           .map(l -> l.stream()
               .map(BEvent::getName)
 //            .filter(s -> !List.of("KeepDown", "ClosingRequest", "OpeningRequest").contains(s))
-              .collect(Collectors.joining(",")))
+              .collect(Collectors.joining(",","","\n")))
           .distinct()
           .sorted()
-          .forEachOrdered(writer::println);
+          .forEachOrdered(s-> {
+            try {
+              zipOut.write(s.getBytes(StandardCharsets.UTF_8));
+            } catch (IOException e) {
+              e.printStackTrace();
+            }
+          });
     }
   }
 
