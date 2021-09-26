@@ -28,7 +28,7 @@ public class LevelCrossingMain {
   //    args[0] = lc_bp | lc_pn | lc_bp_faults | lc_pn_faults
   //    args[1] = number of railways
   //    args[2] (optional) = max path length
-  // For example: args = ["lc_pn_check", "1"]
+  // For example: args = ["lc_pn", "3", "14"]
   public static void main(String[] args) throws Exception {
     System.out.println("Run name: " + args[0] + "_" + args[1]);
 
