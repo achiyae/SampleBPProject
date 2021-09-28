@@ -9,6 +9,7 @@ import il.ac.bgu.cs.bp.statespacemapper.jgrapht.MapperEdge;
 import il.ac.bgu.cs.bp.statespacemapper.jgrapht.MapperVertex;
 import il.ac.bgu.cs.bp.statespacemapper.jgrapht.exports.DotExporter;
 import org.jgrapht.Graph;
+import org.jgrapht.GraphPath;
 import org.jgrapht.nio.DefaultAttribute;
 
 import java.io.FileOutputStream;
@@ -77,6 +78,9 @@ public class LevelCrossingMain {
         .setMaxPathLength(maxPathLength)
         .build();
     var graphPaths = allDirectedPathsAlgorithm.getAllPaths();
+
+    int maxLength = graphPaths.parallelStream().map(GraphPath::getLength).max(Integer::compareTo).orElse(0);
+    System.out.println("// Max path length=" + maxLength);
 
     System.out.println("// Writing paths...");
     try (var fos = new FileOutputStream(Paths.get(outputDir, csvName) + ".zip");

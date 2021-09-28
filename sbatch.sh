@@ -4,11 +4,11 @@ files=("lc_bp" "lc_pn")
 N=5
 
 for file in "${files[@]}"; do
-  for i in $(seq 1 $N); do
-    if [ $i -lt 4 ]; then
+  for i in $(seq 3 $N); do
+    if [ $i -lt 3 ]; then
       sbatch "./job.sh" "$file $i"
     else
-      sbatch "./job.sh" "$file $i 20"
+      sbatch "./job.sh" "$file $i 16"
     fi
   done
 done
