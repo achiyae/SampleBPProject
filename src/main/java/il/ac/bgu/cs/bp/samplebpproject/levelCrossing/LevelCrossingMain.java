@@ -10,16 +10,17 @@ import il.ac.bgu.cs.bp.statespacemapper.jgrapht.MapperVertex;
 import il.ac.bgu.cs.bp.statespacemapper.jgrapht.exports.DotExporter;
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
+import org.jgrapht.graph.DirectedPseudograph;
+import org.jgrapht.nio.Attribute;
 import org.jgrapht.nio.DefaultAttribute;
+import org.jgrapht.nio.dot.DOTImporter;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -30,9 +31,21 @@ public class LevelCrossingMain {
   //    args[1] = number of railways
   //    args[2] (optional) = max path length
   // For example: args = ["lc_pn", "3", "14"]
+
+  // To start from a ready dot file and only generate the paths:
+  // 1) the first parameter must be the path to the dot file
+  // 2) the rest of the parameters are the same as before, only shifted one to the right. For example:
+  //    args[0] = path to dot file
+  //    args[1] = lc_bp | lc_pn | lc_bp_faults | lc_pn_faults
+  //    args[2] = number of railways
+  //    args[3] (optional) = max path length
   public static void main(String[] args) throws Exception {
     System.out.println("Run name: " + args[0] + "_" + args[1]);
-
+    String dotFile = null;
+    if (args[0].contains(".dot")) {
+      dotFile = args[0];
+      args = Arrays.copyOfRange(args, 1, args.length);
+    }
     var railways = Integer.parseInt(args[1]);
     var filename = "levelCrossing/" + args[0] + ".js";
     var runName = args[0] + "_R-" + railways;
@@ -43,30 +56,48 @@ public class LevelCrossingMain {
       maxPathLength = Integer.valueOf(args[2]);
       csvName = runName + "_L-" + maxPathLength + ".csv";
     }
-    final BProgram bprog = new ResourceBProgram(filename);
-    bprog.putInGlobalScope("n", railways);
 
     printJVMStats();
 
-    System.out.println("// Start mapping the states graph");
-    var res = new StateSpaceMapper().mapSpace(bprog);
-    System.out.println("// Completed mapping the states graph");
-    System.out.println(res.toString());
+    MapperResult res = null;
+    if (dotFile == null) {
+      res = mapSpace(railways, filename);
+      exportGraph(outputDir, runName, res);
 
-    exportGraph(outputDir, runName, res);
-
-    if (runName.startsWith("lc_pn")) {
-      System.out.println("// Compressing the PN graph");
-      res = PNMapperResults.CompressGraph(res);
-      System.out.println(res);
-      exportGraph(outputDir, runName + "_compressed", res);
+      if (runName.startsWith("lc_pn")) {
+        res = PNMapperResults.CompressGraph(res);
+        exportGraph(outputDir, runName + "_compressed", res);
+      }
+    } else {
+      res = importStateSpace(dotFile);
     }
-
     generatePaths(csvName, maxPathLength, res, outputDir);
 
     System.out.println("// done");
 
     System.exit(0); // To complete the garbage collection before terminating the program. Solves Maven exceptions.
+  }
+
+  private static MapperResult mapSpace(int railways, String filename) throws Exception {
+    final BProgram bprog = new ResourceBProgram(filename);
+    bprog.putInGlobalScope("n", railways);
+    System.out.println("// Start mapping the states graph");
+    MapperResult res = new StateSpaceMapper().mapSpace(bprog);
+    System.out.println("// Completed mapping the states graph");
+    System.out.println(res.toString());
+    return res;
+  }
+
+  private static MapperResult importStateSpace(String dotFile) {
+    System.out.println("// Importing the states graph");
+    var graph = new DirectedPseudograph<MapperVertex, MapperEdge>(MapperEdge.class);
+    var importer = new DOTImporter<MapperVertex, MapperEdge>();
+    importer.setVertexWithAttributesFactory(MapperVertexExtended::new);
+    importer.setEdgeWithAttributesFactory(MapperEdgeExtended::new);
+    importer.importGraph(graph, new File(dotFile));
+    var startVertex = graph.vertexSet().stream().filter(v -> ((MapperVertexExtended)v).start).findFirst().get();
+    var acceptingVertices = graph.vertexSet().stream().filter(v -> ((MapperVertexExtended)v).accepting).collect(Collectors.toSet());
+    return new PNMapperResults(graph, startVertex, acceptingVertices);
   }
 
   private static void generatePaths(String csvName, Integer maxPathLength, MapperResult res, String outputDir) throws IOException {
@@ -110,9 +141,14 @@ public class LevelCrossingMain {
     System.out.println("// Export to GraphViz...");
     var path = Paths.get(outputDir, runName + ".dot").toString();
     var exporter = new DotExporter(res, path, runName);
-    exporter.setVertexAttributeProvider(v -> Map.of()
-//        Map.of("hash", DefaultAttribute.createAttribute(v.hashCode()))
-    );
+    var vertexProvider = exporter.getVertexAttributeProvider();
+    exporter.setVertexAttributeProvider(v -> {
+      var map = vertexProvider.apply(v);
+        map.remove("store");
+        map.remove("statements");
+        map.remove("bthreads");
+        return map;
+      });
     exporter.setEdgeAttributeProvider(v -> Map.of(
         "label", DefaultAttribute.createAttribute(v.event.name)
     ));
@@ -144,6 +180,8 @@ public class LevelCrossingMain {
     }
 
     public static PNMapperResults CompressGraph(MapperResult base) throws IOException {
+      System.out.println("// Compressing the PN graph");
+
       var startNode = base.startNode;
       var graph = base.graph;
 //      var i = 0;
@@ -171,7 +209,92 @@ public class LevelCrossingMain {
         if (zeroInDegree.isEmpty()) break;
         graph.removeAllVertices(zeroInDegree);
       }
-      return new PNMapperResults(graph, startNode, graph.vertexSet());
+      var res = new PNMapperResults(graph, startNode, graph.vertexSet());
+      System.out.println(res);
+      return res;
+    }
+  }
+
+  static class MapperVertexExtended extends MapperVertex {
+    private final int id;
+    public final boolean start;
+    public final boolean accepting;
+
+    public MapperVertexExtended(String s, Map<String, Attribute> stringAttributeMap) {
+      super(null);
+      id = Integer.parseInt(s);
+      start = Boolean.parseBoolean(stringAttributeMap.get("start").getValue());
+      accepting = Boolean.parseBoolean(stringAttributeMap.get("accepting").getValue());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (!(o instanceof MapperVertexExtended)) return false;
+      return id == ((MapperVertexExtended) o).id;
+    }
+
+    @Override
+    public int hashCode() {
+      return id;
+    }
+  }
+
+  static class MapperEdgeExtended extends MapperEdge {
+    private static BEvent getEvent(String name) {
+      switch (name.charAt(0)) {
+        case 'A':
+          if (name.length() == 2)
+            return new Approaching(Integer.parseInt(name.substring(1)));
+          else
+            return new Approaching();
+        case 'C':
+          if (name.length() == 3)
+            return new ClosingRequest(Integer.parseInt(name.substring(2)));
+          else
+            return new ClosingRequest();
+        case 'E':
+          if (name.length() == 2)
+            return new Entering(Integer.parseInt(name.substring(1)));
+          else
+            return new Entering();
+        case 'F':
+          if (name.charAt(1) == 'R') {
+            return new FaultRaise();
+          } else {
+            if (name.length() == 3)
+              return new FaultEntering(Integer.parseInt(name.substring(2)));
+            else
+              return new FaultEntering();
+          }
+        case 'K':
+          if (name.length() == 3)
+            return new KeepDown(Integer.parseInt(name.substring(2)));
+          else
+            return new KeepDown();
+        case 'L':
+          if (name.charAt(1) == 'e') {
+            if (name.length() == 3) {
+              return new Leaving(Integer.parseInt(name.substring(2)));
+            } else {
+              return new Leaving();
+            }
+          } else {
+            return new Lower();
+          }
+        case 'O':
+          if (name.length() == 3)
+            return new OpeningRequest(Integer.parseInt(name.substring(2)));
+          else
+            return new OpeningRequest();
+        case 'R':
+          return new Raise();
+        default:
+          throw new IllegalArgumentException();
+      }
+    }
+
+    public MapperEdgeExtended(Map<String, Attribute> attributes) {
+      super(getEvent(attributes.get("label").getValue()));
     }
   }
 }
