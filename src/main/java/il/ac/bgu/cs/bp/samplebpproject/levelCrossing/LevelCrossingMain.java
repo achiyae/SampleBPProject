@@ -39,6 +39,7 @@ public class LevelCrossingMain {
   //    args[1] = lc_bp | lc_pn | lc_bp_faults | lc_pn_faults
   //    args[2] = number of railways
   //    args[3] (optional) = max path length
+  // For example: args = ["exports/lc_bp_R-3.dot", "lc_pn", "3", "14"]
   public static void main(String[] args) throws Exception {
     System.out.println("Run name: " + args[0] + "_" + args[1]);
     String dotFile = null;
@@ -111,7 +112,8 @@ public class LevelCrossingMain {
     var graphPaths = allDirectedPathsAlgorithm.getAllPaths();
 
     int maxLength = graphPaths.parallelStream().map(GraphPath::getLength).max(Integer::compareTo).orElse(0);
-    System.out.println("// Max path length=" + maxLength);
+    System.out.println("// Number of paths = " + graphPaths.size());
+    System.out.println("// Max path length = " + maxLength);
 
     System.out.println("// Writing paths...");
     try (var fos = new FileOutputStream(Paths.get(outputDir, csvName) + ".zip");
@@ -223,8 +225,13 @@ public class LevelCrossingMain {
     public MapperVertexExtended(String s, Map<String, Attribute> stringAttributeMap) {
       super(null);
       id = Integer.parseInt(s);
-      start = Boolean.parseBoolean(stringAttributeMap.get("start").getValue());
-      accepting = Boolean.parseBoolean(stringAttributeMap.get("accepting").getValue());
+      if(stringAttributeMap.containsKey("start")) {
+        start = Boolean.parseBoolean(stringAttributeMap.get("start").getValue());
+        accepting = Boolean.parseBoolean(stringAttributeMap.get("accepting").getValue());
+      } else {
+        start = s.equals("1");
+        accepting = true;
+      }
     }
 
     @Override
