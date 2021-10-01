@@ -2,6 +2,8 @@ importPackage(Packages.il.ac.bgu.cs.bp.samplebpproject.levelCrossing)
 if(typeof n === typeof undefined) {
   n = 1
 }
+bp.log.info("Number of railways = " + n)
+
 // const x = [Approaching(0), Entering(0), Leaving(0),
 //             Approaching(1), Entering(1), Leaving(1),
 //             Approaching(2), Entering(2), Leaving(2),
@@ -43,7 +45,7 @@ bp.registerBThread('p_1', function () {
       bp.sync({ waitFor: Approaching(), block: ClosingRequest() })
       p_1_x += 1
     } else {
-      if (bp.sync({ waitFor: [ClosingRequest(), Approaching()] }).name.startsWith('ClosingRequest')) {
+      if (bp.sync({ waitFor: [ClosingRequest(), Approaching()] }).name.equals(ClosingRequest.NAME)) {
         p_1_x -= 1
       } else {
         p_1_x += 1
@@ -59,7 +61,7 @@ bp.registerBThread('p_2', function () {
       bp.sync({ waitFor: OpeningRequest(), block: ClosingRequest() })
       p_2_x += 1
     } else {
-      if (bp.sync({ waitFor: [ClosingRequest(), OpeningRequest()] }).name.startsWith('ClosingRequest')) {
+      if (bp.sync({ waitFor: [ClosingRequest(), OpeningRequest()] }).name.equals(ClosingRequest.NAME)) {
         p_2_x -= 1
       } else {
         p_2_x += 1
@@ -75,7 +77,7 @@ bp.registerBThread('p_3', function () {
       bp.sync({ waitFor: ClosingRequest(), block: OpeningRequest() })
       p_3_x += 1
     } else {
-      if (bp.sync({ waitFor: [ClosingRequest(), OpeningRequest()] }).name.startsWith('OpeningRequest')) {
+      if (bp.sync({ waitFor: [ClosingRequest(), OpeningRequest()] }).name.equals(OpeningRequest.NAME)) {
         p_3_x -= 1
       } else {
         p_3_x += 1
@@ -91,7 +93,7 @@ bp.registerBThread('p_4', function () {
       bp.sync({ waitFor: Leaving(), block: OpeningRequest() })
       p_4_x += 1
     } else {
-      if (bp.sync({ waitFor: [OpeningRequest(), Leaving()] }).name.startsWith('OpeningRequest')) {
+      if (bp.sync({ waitFor: [OpeningRequest(), Leaving()] }).name.equals(OpeningRequest.NAME)) {
         p_4_x -= 1
       } else {
         p_4_x += 1
@@ -107,7 +109,7 @@ bp.registerBThread('p_5', function () {
       bp.sync({ waitFor: ClosingRequest(), block: [Lower(), KeepDown()] })
       p_5_x += 1
     } else {
-      if (bp.sync({ waitFor: [ClosingRequest(), Lower(), KeepDown()] }).name.startsWith('ClosingRequest')) {
+      if (bp.sync({ waitFor: [ClosingRequest(), Lower(), KeepDown()] }).name.equals(ClosingRequest.NAME)) {
         p_5_x += 1
       } else {
         p_5_x -= 1
@@ -122,10 +124,10 @@ bp.registerBThread('p_6', function () {
   while (true) {
     if (p_6_x >= n) {
       event = bp.sync({ waitFor: [ClosingRequest(), OpeningRequest(), Raise()] }).name
-      if (event.startsWith('OpeningRequest')) {
+      if (event.equals(OpeningRequest.NAME)) {
         p_6_x += 1
       } else {
-        if (event.startsWith('ClosingRequest')) {
+        if (event.equals(ClosingRequest.NAME)) {
           p_6_x -= 1
         }
       }
@@ -135,7 +137,7 @@ bp.registerBThread('p_6', function () {
         if (bp.sync({
           waitFor: [ClosingRequest(), OpeningRequest()],
           block: Raise()
-        }).name.startsWith('OpeningRequest')) {
+        }).name.equals(OpeningRequest.NAME)) {
           p_6_x += 1
         } else {
           p_6_x -= 1
@@ -155,7 +157,7 @@ bp.registerBThread('p_7', function () {
       bp.sync({ waitFor: Raise(), block: Lower() })
       p_7_x += 1
     } else {
-      if (bp.sync({ waitFor: [Raise(), Lower()] }).name.startsWith('Raise')) {
+      if (bp.sync({ waitFor: [Raise(), Lower()] }).name.equals(Raise.NAME)) {
         p_7_x += 1
       } else {
         p_7_x -= 1
@@ -169,17 +171,17 @@ bp.registerBThread('p_8', function () {
   var event = ''
   while (true) {
     if (p_8_x < 1) {
-      if (bp.sync({ waitFor: Lower(), block: [Raise(), KeepDown()] }).name.startsWith('Lower')) {
+      if (bp.sync({ waitFor: Lower(), block: [Raise(), KeepDown()] }).name.equals(Lower.NAME)) {
         p_8_x += 1
       } else {
         p_8_x -= 1
       }
     } else {
       event = bp.sync({ waitFor: [Lower(), KeepDown(), Raise()] }).name
-      if (event.startsWith('Lower')) {
+      if (event.equals(Lower.NAME)) {
         p_8_x += 1
       } else {
-        if (event.startsWith('Raise')) {
+        if (event.equals(Raise.NAME)) {
           p_8_x -= 1
         }
       }
@@ -199,10 +201,10 @@ bp.registerBThread('p_9', function () {
       p_9_x += 1
     } else {
       event = bp.sync({ waitFor: [Lower(), KeepDown(), Entering(), Leaving()] }).name
-      if (event.startsWith('Lower') || event.startsWith('KeepDown')) {
+      if (event.equals(Lower.NAME) || event.equals(KeepDown.NAME)) {
         p_9_x += 1
       }
-      if (event.startsWith('Leaving')) {
+      if (event.equals(Leaving.NAME)) {
         p_9_x -= 1
       }
       event = ''
