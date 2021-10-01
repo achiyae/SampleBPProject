@@ -41,7 +41,7 @@ public class LevelCrossingMain {
   //    args[3] (optional) = max path length
   // For example: args = ["exports/lc_bp_R-3.dot", "lc_pn", "3", "14"]
   public static void main(String[] args) throws Exception {
-    System.out.println("Run name: " + args[0] + "_" + args[1]);
+    System.out.println("Args: " + Arrays.toString(args));
     String dotFile = null;
     if (args[0].contains(".dot")) {
       dotFile = args[0];
@@ -60,7 +60,7 @@ public class LevelCrossingMain {
 
     printJVMStats();
 
-    MapperResult res = null;
+    MapperResult res;
     if (dotFile == null) {
       res = mapSpace(railways, filename);
       exportGraph(outputDir, runName, res);
@@ -181,10 +181,10 @@ public class LevelCrossingMain {
       super(graph, startNode, acceptingStates);
     }
 
-    public static PNMapperResults CompressGraph(MapperResult base) throws IOException {
+    public static PNMapperResults CompressGraph(MapperResult base) {
       System.out.println("// Compressing the PN graph");
 
-      var startNode = base.startNode;
+      var startNode = base.startVertex();
       var graph = base.graph;
 //      var i = 0;
       while (true) {
