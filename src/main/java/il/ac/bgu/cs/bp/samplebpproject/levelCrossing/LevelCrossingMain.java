@@ -74,7 +74,7 @@ public class LevelCrossingMain {
       exportGraph(outputDir, runName, res);
 
       if (runName.startsWith("lc_pn")) {
-        res = PNMapperResults.CompressGraph(res);
+        res = PNMapperResults.removeHelperEvents(res);
         exportGraph(outputDir, runName + "_compressed", res);
       }
     } else {
@@ -210,7 +210,7 @@ public class LevelCrossingMain {
       super(graph, startNode, acceptingStates);
     }
 
-    public static PNMapperResults CompressGraph(MapperResult base) {
+    public static PNMapperResults removeHelperEvents(MapperResult base) {
       logger.info("// Compressing the PN graph");
 
       var startNode = base.startVertex();
@@ -218,7 +218,7 @@ public class LevelCrossingMain {
 //      var i = 0;
       while (true) {
         var edge = graph.edgeSet().parallelStream()
-            .filter(e -> List.of("KeepDown", "ClosingRequest", "OpeningRequest").contains(e.event.name))
+            .filter(e -> List.of(KeepDown.NAME, ClosingRequest.NAME, OpeningRequest.NAME).contains(e.event.name))
             .findAny().orElse(null);
         if (edge == null) break;
 //        logger.info("Removing " + edge.event.name);
