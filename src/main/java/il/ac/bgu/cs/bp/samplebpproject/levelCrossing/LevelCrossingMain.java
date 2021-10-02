@@ -8,6 +8,8 @@ import il.ac.bgu.cs.bp.statespacemapper.StateSpaceMapper;
 import il.ac.bgu.cs.bp.statespacemapper.jgrapht.MapperEdge;
 import il.ac.bgu.cs.bp.statespacemapper.jgrapht.MapperVertex;
 import il.ac.bgu.cs.bp.statespacemapper.jgrapht.exports.DotExporter;
+import il.ac.bgu.cs.bp.statespacemapper.jgrapht.exports.Exporter;
+import il.ac.bgu.cs.bp.statespacemapper.jgrapht.exports.GoalExporter;
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
 import org.jgrapht.graph.DirectedPseudograph;
@@ -49,7 +51,7 @@ public class LevelCrossingMain {
   // For example: args = ["exports/lc_bp_R-3.dot", "lc_pn", "3", "14"]
   public static void main(String[] args) throws Exception {
     setupLogger();
-    logger.info("Args: " + Arrays.toString(args)+"\n");
+    logger.info("Args: " + Arrays.toString(args) + "\n");
     String dotFile = null;
     if (args[0].contains(".dot")) {
       dotFile = args[0];
@@ -123,8 +125,8 @@ public class LevelCrossingMain {
     importer.setVertexWithAttributesFactory(MapperVertexExtended::new);
     importer.setEdgeWithAttributesFactory(MapperEdgeExtended::new);
     importer.importGraph(graph, new File(dotFile));
-    var startVertex = graph.vertexSet().stream().filter(v -> ((MapperVertexExtended)v).start).findFirst().get();
-    var acceptingVertices = graph.vertexSet().stream().filter(v -> ((MapperVertexExtended)v).accepting).collect(Collectors.toSet());
+    var startVertex = graph.vertexSet().stream().filter(v -> ((MapperVertexExtended) v).start).findFirst().get();
+    var acceptingVertices = graph.vertexSet().stream().filter(v -> ((MapperVertexExtended) v).accepting).collect(Collectors.toSet());
     return new PNMapperResults(graph, startVertex, acceptingVertices);
   }
 
@@ -151,7 +153,7 @@ public class LevelCrossingMain {
       MapperResult.GraphPaths2BEventPaths(graphPaths)
           .parallelStream()
           .map(l -> l.stream()
-              .map(BEvent::getName)
+              .map(BEvent::toString)
 //            .filter(s -> !List.of("KeepDown", "ClosingRequest", "OpeningRequest").contains(s))
               .collect(Collectors.joining(",", "", "\n")))
           .distinct()
@@ -169,18 +171,27 @@ public class LevelCrossingMain {
   private static void exportGraph(String outputDir, String runName, MapperResult res) throws IOException {
     logger.info("// Export to GraphViz...");
     var path = Paths.get(outputDir, runName + ".dot").toString();
-    var exporter = new DotExporter(res, path, runName);
+    Exporter exporter = new DotExporter(res, path, runName);
+    exporter.setEdgeAttributeProvider(v -> Map.of(
+        "label", DefaultAttribute.createAttribute(v.event.toString())
+    ));
+    exportGraph(exporter);
+
+    logger.info("// Export to GOAL...");
+    path = Paths.get(outputDir, runName + ".gff").toString();
+    exporter = new GoalExporter(res, path, runName, true);
+    exportGraph(exporter);
+  }
+
+  private static void exportGraph(Exporter exporter) throws IOException {
     var vertexProvider = exporter.getVertexAttributeProvider();
     exporter.setVertexAttributeProvider(v -> {
       var map = vertexProvider.apply(v);
-        map.remove("store");
-        map.remove("statements");
-        map.remove("bthreads");
-        return map;
-      });
-    exporter.setEdgeAttributeProvider(v -> Map.of(
-        "label", DefaultAttribute.createAttribute(v.event.name)
-    ));
+      map.remove("store");
+      map.remove("statements");
+      map.remove("bthreads");
+      return map;
+    });
     exporter.export();
   }
 
@@ -217,17 +228,18 @@ public class LevelCrossingMain {
       var graph = base.graph;
 //      var i = 0;
       while (true) {
+        // find edge to remove
         var edge = graph.edgeSet().parallelStream()
             .filter(e -> List.of(KeepDown.NAME, ClosingRequest.NAME, OpeningRequest.NAME).contains(e.event.name))
             .findAny().orElse(null);
         if (edge == null) break;
-//        logger.info("Removing " + edge.event.name);
+//        logger.info("Removing " + edge.event.toString());
         var source = graph.getEdgeSource(edge);
         var target = graph.getEdgeTarget(edge);
         var targetOut = new ArrayList<>(graph.outgoingEdgesOf(target));
         for (var e : targetOut) {
           var eTarget = graph.getEdgeTarget(e);
-          if (graph.outgoingEdgesOf(source).parallelStream().map(e1 -> e1.event.name).noneMatch(e1 -> e1.equals(e.event.name)))
+          if (graph.outgoingEdgesOf(source).parallelStream().map(e1 -> e1.event).noneMatch(e1 -> e1.equals(e.event)))
             graph.addEdge(source, eTarget, new MapperEdge(e.event));
         }
         graph.removeEdge(edge);
@@ -254,7 +266,7 @@ public class LevelCrossingMain {
     public MapperVertexExtended(String s, Map<String, Attribute> stringAttributeMap) {
       super(null);
       id = Integer.parseInt(s);
-      if(stringAttributeMap.containsKey("start")) {
+      if (stringAttributeMap.containsKey("start")) {
         start = Boolean.parseBoolean(stringAttributeMap.get("start").getValue());
         accepting = Boolean.parseBoolean(stringAttributeMap.get("accepting").getValue());
       } else {

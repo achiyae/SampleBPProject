@@ -40,4 +40,9 @@ public abstract class IEvent extends BEvent {
   public int hashCode() {
     return name.hashCode();
   }
+
+  @Override
+  public String toString() {
+    return i == -1 ? name : name + i;
+  }
 }
