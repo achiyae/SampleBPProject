@@ -133,8 +133,8 @@ public class LevelCrossingMain {
   private static void generatePaths(String csvName, Integer maxPathLength, MapperResult res, String outputDir) throws IOException {
     logger.info("// Generating paths...");
     var allDirectedPathsAlgorithm = res.createAllDirectedPathsBuilder()
-        .setSimplePathsOnly(maxPathLength == null)
-        .setIncludeReturningEdgesInSimplePaths(maxPathLength == null)
+        .setSimplePathsOnly(true)
+        .setIncludeReturningEdgesInSimplePaths(true)
         .setLongestPathsOnly(false)
         .setMaxPathLength(maxPathLength)
         .build();
