@@ -33,7 +33,7 @@ import java.util.zip.ZipOutputStream;
 
 public class LevelCrossingMain {
   private static Logger logger = Logger.getLogger(LevelCrossingMain.class.getName());
-
+  private static MapperResult res = null;
 
   // Program arguments =
   //    args[0] = lc_bp | lc_pn | lc_bp_faults | lc_pn_faults
@@ -70,19 +70,18 @@ public class LevelCrossingMain {
 
     printJVMStats();
 
-    MapperResult res;
     if (dotFile == null) {
       res = mapSpace(railways, filename);
-      exportGraph(outputDir, runName, res);
+      exportGraph(outputDir, runName);
 
       if (runName.startsWith("lc_pn")) {
         res = PNMapperResults.removeHelperEvents(res);
-        exportGraph(outputDir, runName + "_compressed", res);
+        exportGraph(outputDir, runName + "_compressed");
       }
     } else {
       res = importStateSpace(dotFile);
     }
-    generatePaths(csvName, maxPathLength, res, outputDir);
+    generatePaths(csvName, maxPathLength, outputDir);
 
     logger.info("// done");
 
@@ -130,7 +129,7 @@ public class LevelCrossingMain {
     return new PNMapperResults(graph, startVertex, acceptingVertices);
   }
 
-  private static void generatePaths(String csvName, Integer maxPathLength, MapperResult res, String outputDir) throws IOException {
+  private static void generatePaths(String csvName, Integer maxPathLength, String outputDir) throws IOException {
     logger.info("// Generating paths...");
     var allDirectedPathsAlgorithm = res.createAllDirectedPathsBuilder()
         .setSimplePathsOnly(maxPathLength == null)
@@ -139,7 +138,7 @@ public class LevelCrossingMain {
         .setMaxPathLength(maxPathLength)
         .build();
     var graphPaths = allDirectedPathsAlgorithm.getAllPaths();
-
+    res = null;
     int maxLength = graphPaths.parallelStream().map(GraphPath::getLength).max(Integer::compareTo).orElse(0);
     logger.info("// Number of paths = " + graphPaths.size());
     logger.info("// Max path length = " + maxLength);
@@ -168,7 +167,7 @@ public class LevelCrossingMain {
     }
   }
 
-  private static void exportGraph(String outputDir, String runName, MapperResult res) throws IOException {
+  private static void exportGraph(String outputDir, String runName) throws IOException {
     logger.info("// Export to GraphViz...");
     var path = Paths.get(outputDir, runName + ".dot").toString();
     Exporter exporter = new DotExporter(res, path, runName);

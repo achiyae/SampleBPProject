@@ -2,7 +2,7 @@
 #files=("lc_bp" "lc_pn" "lc_bp_faults" "lc_pn_faults")
 #files=("lc_bp_faults" "lc_pn_faults")
 files=("lc_bp" "lc_pn")
-START=1
+START=3
 N=5
 
 for file in "${files[@]}"; do
