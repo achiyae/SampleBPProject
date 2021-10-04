@@ -134,7 +134,7 @@ public class LevelCrossingMain {
     var allDirectedPathsAlgorithm = res.createAllDirectedPathsBuilder()
         .setSimplePathsOnly(maxPathLength == null)
         .setIncludeReturningEdgesInSimplePaths(maxPathLength == null)
-        .setLongestPathsOnly(false)
+        .setLongestPathsOnly(maxPathLength == null)
         .setMaxPathLength(maxPathLength)
         .build();
     var graphPaths = allDirectedPathsAlgorithm.getAllPaths();
@@ -144,7 +144,7 @@ public class LevelCrossingMain {
     logger.info("// Max path length = " + maxLength);
 
     logger.info("// Writing paths...");
-    try (var fos = new FileOutputStream(Paths.get(outputDir, csvName) + ".zip");
+    try (var fos = new FileOutputStream(Paths.get(outputDir, "longest-"+csvName) + ".zip");
          var zipOut = new ZipOutputStream(fos)) {
       var zipEntry = new ZipEntry(csvName);
       zipOut.putNextEntry(zipEntry);
