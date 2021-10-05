@@ -81,7 +81,7 @@ public class LevelCrossingMain {
     } else {
       res = importStateSpace(dotFile);
     }
-    generatePaths(csvName, maxPathLength, outputDir);
+//    generatePaths(csvName, maxPathLength, outputDir);
 
     logger.info("// done");
 
