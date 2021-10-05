@@ -134,7 +134,7 @@ public class LevelCrossingMain {
     var allDirectedPathsAlgorithm = res.createAllDirectedPathsBuilder()
         .setSimplePathsOnly(maxPathLength == null)
         .setIncludeReturningEdgesInSimplePaths(maxPathLength == null)
-        .setLongestPathsOnly(maxPathLength == null)
+        .setLongestPathsOnly(false)
         .setMaxPathLength(maxPathLength)
         .build();
     var graphPaths = allDirectedPathsAlgorithm.getAllPaths();
@@ -144,7 +144,7 @@ public class LevelCrossingMain {
     logger.info("// Max path length = " + maxLength);
 
     logger.info("// Writing paths...");
-    try (var fos = new FileOutputStream(Paths.get(outputDir, "longest-"+csvName) + ".zip");
+    try (var fos = new FileOutputStream(Paths.get(outputDir, csvName) + ".zip");
          var zipOut = new ZipOutputStream(fos)) {
       var zipEntry = new ZipEntry(csvName);
       zipOut.putNextEntry(zipEntry);
@@ -227,10 +227,18 @@ public class LevelCrossingMain {
       var graph = base.graph;
 //      var i = 0;
       while (true) {
-        // find edge to remove
-        var edge = graph.edgeSet().parallelStream()
+        // find edge to remove. using sequential stream and not parallel - to get the same result every time.
+        var edge = graph.edgeSet().stream()
+            .sorted((o1, o2) -> {
+              var o1s = graph.getEdgeSource(o1).hashCode();
+              var o1t = graph.getEdgeTarget(o1).hashCode();
+              var o2s = graph.getEdgeSource(o2).hashCode();
+              var o2t = graph.getEdgeTarget(o2).hashCode();
+              if(o1s == o2s) return Integer.compare(o1t, o2t);
+              return Integer.compare(o1s, o2s);
+            })
             .filter(e -> List.of(KeepDown.NAME, ClosingRequest.NAME, OpeningRequest.NAME).contains(e.event.name))
-            .findAny().orElse(null);
+            .findFirst().orElse(null);
         if (edge == null) break;
 //        logger.info("Removing " + edge.event.toString());
         var source = graph.getEdgeSource(edge);
@@ -238,7 +246,7 @@ public class LevelCrossingMain {
         var targetOut = new ArrayList<>(graph.outgoingEdgesOf(target));
         for (var e : targetOut) {
           var eTarget = graph.getEdgeTarget(e);
-          if (graph.outgoingEdgesOf(source).parallelStream().map(e1 -> e1.event).noneMatch(e1 -> e1.equals(e.event)))
+          if (graph.outgoingEdgesOf(source).stream().map(e1 -> e1.event).noneMatch(e1 -> e1.equals(e.event)))
             graph.addEdge(source, eTarget, new MapperEdge(e.event));
         }
         graph.removeEdge(edge);
