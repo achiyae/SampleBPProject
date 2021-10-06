@@ -2,6 +2,7 @@ package il.ac.bgu.cs.bp.samplebpproject.levelCrossing;
 
 import il.ac.bgu.cs.bp.bpjs.model.BEvent;
 import il.ac.bgu.cs.bp.bpjs.model.BProgram;
+import il.ac.bgu.cs.bp.bpjs.model.BThreadSyncSnapshot;
 import il.ac.bgu.cs.bp.bpjs.model.ResourceBProgram;
 import il.ac.bgu.cs.bp.statespacemapper.MapperResult;
 import il.ac.bgu.cs.bp.statespacemapper.StateSpaceMapper;
@@ -22,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.LogRecord;
@@ -75,17 +77,45 @@ public class LevelCrossingMain {
       exportGraph(outputDir, runName);
 
       if (runName.startsWith("lc_pn")) {
+//        findProblemEquals(res);
         res = PNMapperResults.removeHelperEvents(res);
         exportGraph(outputDir, runName + "_compressed");
       }
     } else {
       res = importStateSpace(dotFile);
     }
-//    generatePaths(csvName, maxPathLength, outputDir);
+    if (railways < 3 || (railways < 4 && !runName.contains("faults"))) {
+      generatePaths(csvName, maxPathLength, outputDir);
+    }
 
     logger.info("// done");
 
     System.exit(0); // To complete the garbage collection before terminating the program. Solves Maven exceptions.
+  }
+
+  private static void findProblemEquals(MapperResult res) {
+    var allDirectedPathsAlgorithm = res.createAllDirectedPathsBuilder()
+        .setSimplePathsOnly(false)
+        .setIncludeReturningEdgesInSimplePaths(false)
+        .setLongestPathsOnly(false)
+        .setMaxPathLength(7)
+        .build();
+    var problematicPath = allDirectedPathsAlgorithm.getAllPaths()
+        .stream().filter(p -> {
+          var edges = p.getEdgeList();
+          if (edges.isEmpty()) return false;
+          return edges.get(edges.size() - 1).event.name.equals(Raise.NAME);
+        }).findFirst().get();
+    var start = problematicPath.getStartVertex().bpss.getBThreadSnapshots().stream().sorted(Comparator.comparing(BThreadSyncSnapshot::getName)).collect(Collectors.toList());
+    var end = problematicPath.getEndVertex().bpss.getBThreadSnapshots().stream().sorted(Comparator.comparing(BThreadSyncSnapshot::getName)).collect(Collectors.toList());
+    for (int i = 0; i < start.size(); i++) {
+      var s = start.get(i);
+      var e = end.get(i);
+      System.out.println(MessageFormat.format("{0} {1} {2} {3}", i, s.getName(), e.getName(), s.equals(e)));
+    }
+    System.out.println(start.equals(end));
+    System.out.println("end");
+    System.exit(1);
   }
 
   private static void setupLogger() {
@@ -108,7 +138,7 @@ public class LevelCrossingMain {
 
   private static MapperResult mapSpace(int railways, String filename) throws Exception {
     final BProgram bprog = new ResourceBProgram(filename);
-    bprog.putInGlobalScope("n", railways);
+    bprog.putInGlobalScope("n", railways * 1.0);
     logger.info("// Start mapping the states graph");
     MapperResult res = new StateSpaceMapper().mapSpace(bprog);
     logger.info("// Completed mapping the states graph");
@@ -234,7 +264,7 @@ public class LevelCrossingMain {
               var o1t = graph.getEdgeTarget(o1).hashCode();
               var o2s = graph.getEdgeSource(o2).hashCode();
               var o2t = graph.getEdgeTarget(o2).hashCode();
-              if(o1s == o2s) return Integer.compare(o1t, o2t);
+              if (o1s == o2s) return Integer.compare(o1t, o2t);
               return Integer.compare(o1s, o2s);
             })
             .filter(e -> List.of(KeepDown.NAME, ClosingRequest.NAME, OpeningRequest.NAME).contains(e.event.name))
