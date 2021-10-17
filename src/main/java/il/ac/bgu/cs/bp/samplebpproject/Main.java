@@ -6,6 +6,7 @@ import il.ac.bgu.cs.bp.bpjs.model.ResourceBProgram;
 import il.ac.bgu.cs.bp.statespacemapper.MapperResult;
 import il.ac.bgu.cs.bp.statespacemapper.StateSpaceMapper;
 import il.ac.bgu.cs.bp.statespacemapper.jgrapht.exports.DotExporter;
+import il.ac.bgu.cs.bp.statespacemapper.jgrapht.exports.GoalExporter;
 import org.jgrapht.nio.DefaultAttribute;
 
 import java.nio.file.Paths;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 public class Main {
   public static void main(String[] args) throws Exception {
     // This will load the program file  <Project>/src/main/resources/HelloBPjsWorld.js
+//    final BProgram bprog = new ResourceBProgram("DiningPhilosophers.js");
     final BProgram bprog = new ResourceBProgram("HelloBPjsWorld.js");
     var runName = bprog.getName();
 
@@ -28,12 +30,17 @@ public class Main {
 
     System.out.println("// Export to GraphViz...");
     var outputDir = "exports";
-    var path = Paths.get(outputDir, runName + ".dot").toString();
-    var exporter = new DotExporter(res, path, runName);
-    exporter.setVertexAttributeProvider(v ->
+    var pathDot = Paths.get(outputDir, runName + ".dot").toString();
+    var pathGoal = Paths.get(outputDir, runName + ".gff").toString();
+
+    var dotExporter = new DotExporter(res, pathGoal, runName);
+    dotExporter.setVertexAttributeProvider(v ->
         Map.of("hash", DefaultAttribute.createAttribute(v.hashCode()))
     );
-    exporter.export();
+    dotExporter.export();
+
+    var goalExporter = new GoalExporter(res, pathGoal, runName);
+    goalExporter.export();
 
     printAllPaths(res);
 

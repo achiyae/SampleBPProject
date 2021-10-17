@@ -14,7 +14,7 @@ bp.registerBThread( "worldBT", function(){
 
 
 bp.registerBThread( "aa", function(){
-  bp.sync( {request:bp.Event("aa")} );
+  // bp.sync( {request:bp.Event("aa")} );
   bp.sync( {request:bp.Event("World!")} );
 } );
 
