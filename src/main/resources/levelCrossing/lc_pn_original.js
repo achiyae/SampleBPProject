@@ -106,10 +106,10 @@ bp.registerBThread('p_5', function () {
   var p_5_x = 0
   while (true) {
     if (p_5_x < 1) {
-      bp.sync({ waitFor: ClosingRequest(), block: [Lower(), KeepDown()] })
+      bp.sync({ waitFor: ClosingRequest(), block: Lower() })
       p_5_x += 1
     } else {
-      if (bp.sync({ waitFor: [ClosingRequest(), Lower(), KeepDown()] }).name.equals(ClosingRequest.NAME)) {
+      if (bp.sync({ waitFor: [ClosingRequest(), Lower()] }).name.equals(ClosingRequest.NAME)) {
         p_5_x += 1
       } else {
         p_5_x -= 1
@@ -152,13 +152,13 @@ bp.registerBThread('p_8', function () {
   var event = ''
   while (true) {
     if (p_8_x < 1) {
-      if (bp.sync({ waitFor: Lower(), block: [Raise(), KeepDown()] }).name.equals(Lower.NAME)) {
+      if (bp.sync({ waitFor: Lower(), block: [Raise()] }).name.equals(Lower.NAME)) {
         p_8_x += 1
       } else {
         p_8_x -= 1
       }
     } else {
-      event = bp.sync({ waitFor: [Lower(), KeepDown(), Raise()] }).name
+      event = bp.sync({ waitFor: [Lower(), Raise()] }).name
       if (event.equals(Lower.NAME)) {
         p_8_x += 1
       } else {
@@ -176,13 +176,13 @@ bp.registerBThread('p_9', function () {
   var event = ''
   while (true) {
     if (p_9_x < 1) {
-      bp.sync({ waitFor: [Lower(), KeepDown()], block: [Entering(), Leaving()] })
+      bp.sync({ waitFor: [Lower()], block: [Entering(), Leaving()] })
       //bp.sync({waitFor: [Lower(), KeepDown()], block:[Leaving()]});
       //bp.sync({waitFor: [Lower(), KeepDown()]});
       p_9_x += 1
     } else {
-      event = bp.sync({ waitFor: [Lower(), KeepDown(), Entering(), Leaving()] }).name
-      if (event.equals(Lower.NAME) || event.equals(KeepDown.NAME)) {
+      event = bp.sync({ waitFor: [Lower(), Entering(), Leaving()] }).name
+      if (event.equals(Lower.NAME)) {
         p_9_x += 1
       }
       if (event.equals(Leaving.NAME)) {
@@ -199,8 +199,7 @@ bp.registerBThread('phelper', function () {
       request: [ClosingRequest(),
         OpeningRequest(),
         Lower(),
-        Raise(),
-        KeepDown()]
+        Raise()]
     })
   }
 })
