@@ -123,10 +123,12 @@ bp.registerBThread('p_6', function () {
   while (true) {
     if (p_6_x < 1) {
       bp.sync({ waitFor: OpeningRequest(), block:Raise() })
-      p_6_x += 1
+      if(p_6_x==0)
+        p_6_x += 1
     } else {
       if (bp.sync({ waitFor: [OpeningRequest(), Raise()] }).name.equals(OpeningRequest.NAME)) {
-        p_6_x += 1
+        if(p_6_x==0)
+          p_6_x += 1
       } else {
         p_6_x -= 1
       }
