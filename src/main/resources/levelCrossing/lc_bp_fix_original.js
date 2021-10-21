@@ -20,8 +20,9 @@ for (var i = 0; i < n; i++) {
       }
     })
 
+
     //COMMENT FROM ACHIYA: removed in fix version
-    /*bp.registerBThread('Barrier cannot be raised when there is a train in railway ' + i, function () {
+    /*bp.registerBThread('Barriers cannot be raised when there is a train in railway ' + i, function () {
       while (true) {
         bp.sync({ waitFor: Approaching(i) })
         bp.sync({ waitFor: Leaving(i), block: Raise() })//
@@ -48,7 +49,8 @@ bp.registerBThread('Lower the barrier when a train is approaching and then raise
         bp.sync({ waitFor: Approaching() })
         bp.sync({ request: Lower() })
       } else {
-        if (bp.sync({ request: Raise(), waitFor: Entering() }).name.equals(Raise.NAME)) {
+        // COMMENT FROM ACHIYA:
+        if (bp.sync({ request: Raise(),block:Entering() }).name.equals(Raise.NAME)) {
           bp.sync({ request: Lower() })
         }
       }
