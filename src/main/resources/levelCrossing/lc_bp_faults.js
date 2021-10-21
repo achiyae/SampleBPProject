@@ -1,18 +1,12 @@
 importPackage(Packages.il.ac.bgu.cs.bp.samplebpproject.levelCrossing)
-if(typeof n === typeof undefined) {
+if (typeof n === typeof undefined) {
   n = 1
 }
-bp.log.info("Number of railways = " + n)
-
-// const x = [Approaching(0), Entering(0), Leaving(0),
-//     Approaching(1), Entering(1), Leaving(1),
-//     Approaching(2), Entering(2), Leaving(2),
-//     Approaching(3), Entering(3), Leaving(3), 
-//     Raise(), Lower(), ClosingRequest(), OpeningRequest(), KeepDown()];
+bp.log.info('Number of railways = ' + n)
 
 for (var i = 0; i < n; i++) {
   (function (i) {
-    bp.registerBThread('Railway ' + i + ' Sensors', function () {
+    bp.registerBThread('R1: Railway ' + i + ' Sensors', function () {
       while (true) {
         bp.sync({ request: Approaching(i) })
         bp.sync({ request: [Entering(i), FaultEntering(i)] })
@@ -20,24 +14,23 @@ for (var i = 0; i < n; i++) {
       }
     })
 
-    bp.registerBThread('Barrier cannot be raised when there is a train in railway ' + i, function () {
-      while (true) {
-        bp.sync({ waitFor: Approaching(i) })
-        bp.sync({ waitFor: Leaving(i), block: Raise() })//
-      }
-    })
-
-    bp.registerBThread('Trains cannot enter railway ' + i + ' when the barier is down', function () {
+    bp.registerBThread('R3: train ' + i + 'may not enter while barriers are up', function () {
       while (true) {
         bp.sync({ waitFor: Lower(), block: Entering(i) })
         bp.sync({ waitFor: Raise() })
       }
     })
 
+    bp.registerBThread('R4: Do not raise barriers while train ' + i + ' is in the intersection zone', function () {
+      while (true) {
+        bp.sync({ waitFor: Approaching(i) })
+        bp.sync({ waitFor: Leaving(i), block: Raise() })//
+      }
+    })
   })(i)
 }
 
-bp.registerBThread('Lower the barrier when a train is approaching and then raise it as soon as possible', function () {
+bp.registerBThread('R2: Barriers Dynamics', function () {
   while (true) {
     bp.sync({ waitFor: Approaching() })
     bp.sync({ request: Lower() })

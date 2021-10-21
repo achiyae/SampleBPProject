@@ -12,7 +12,7 @@ bp.log.info('Number of railways = ' + n)
 
 for (var i = 0; i < n; i++) {
   (function (i) {
-    bp.registerBThread('Railway ' + i + ' Sensors', function () {
+    bp.registerBThread('R1: Railway ' + i + ' Sensors', function () {
       while (true) {
         bp.sync({ request: Approaching(i) })
         bp.sync({ request: Entering(i) })
@@ -20,25 +20,24 @@ for (var i = 0; i < n; i++) {
       }
     })
 
-    //COMMENT FROM ACHIYA: removed in fix version
-    /*bp.registerBThread('Barrier cannot be raised when there is a train in railway ' + i, function () {
-      while (true) {
-        bp.sync({ waitFor: Approaching(i) })
-        bp.sync({ waitFor: Leaving(i), block: Raise() })//
-      }
-    })*/
-
-    bp.registerBThread('Trains cannot enter railway ' + i + ' when the barrier is down', function () {
+    bp.registerBThread('R3: train ' + i + 'may not enter while barriers are up', function () {
       while (true) {
         bp.sync({ waitFor: Lower(), block: Entering(i) })
         bp.sync({ waitFor: Raise() })
       }
     })
 
+    //COMMENT FROM ACHIYA: removed in fix version
+    /*bp.registerBThread('R4: Do not raise barriers while train ' + i + ' is in the intersection zone', function () {
+      while (true) {
+        bp.sync({ waitFor: Approaching(i) })
+        bp.sync({ waitFor: Leaving(i), block: Raise() })//
+      }
+    })*/
   })(i)
 }
 
-bp.registerBThread('Lower the barrier when a train is approaching and then raise it as soon as possible', function () {
+bp.registerBThread('R2*: Modified Barriers Dynamics', function () {
   while (true) {
     bp.sync({ waitFor: Approaching() })
     bp.sync({ request: Lower() })
