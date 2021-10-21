@@ -33,7 +33,7 @@ public class Main {
     var pathDot = Paths.get(outputDir, runName + ".dot").toString();
     var pathGoal = Paths.get(outputDir, runName + ".gff").toString();
 
-    var dotExporter = new DotExporter(res, pathGoal, runName);
+    var dotExporter = new DotExporter(res, pathDot, runName);
     dotExporter.setVertexAttributeProvider(v ->
         Map.of("hash", DefaultAttribute.createAttribute(v.hashCode()))
     );

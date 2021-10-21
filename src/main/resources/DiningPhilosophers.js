@@ -55,12 +55,12 @@ for (let c = 1; c <= PHILOSOPHER_COUNT; c++) {
   })
 
   // A hungry philosopher will eventually eat
-  /*bthread('NoStarvation', function () {
+  bthread('NoStarvation', function () {
     while (true) {
       hot(true).sync({waitFor: Take(i, 'L')})
       sync({waitFor: Put(i, 'R')})
     }
-  })*/
+  })
 }
 
 
