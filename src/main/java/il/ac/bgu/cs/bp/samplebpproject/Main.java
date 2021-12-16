@@ -19,7 +19,7 @@ import java.util.zip.ZipOutputStream;
 
 public class Main {
   public static void main(String[] args) throws Exception {
-    String name = "TicTacToe";
+    String name = "EvolvedTicTacToe";
 
     System.out.println("// start");
     // This will load the program file  <Project>/src/main/resources/HelloBPjsWorld.js
