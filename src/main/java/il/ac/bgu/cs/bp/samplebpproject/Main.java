@@ -13,6 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -27,7 +28,7 @@ public class Main {
 //    BProgram bprog = new ResourceBProgram(name+".js");
 
     // You can use a different EventSelectionStrategy, for example:
-     var ess = new PrioritizedBSyncEventSelectionStrategy();
+    var ess = new PrioritizedBSyncEventSelectionStrategy();
     bprog.setEventSelectionStrategy(ess);
     StateSpaceMapper mpr = new StateSpaceMapper();
     var res = mpr.mapSpace(bprog);
@@ -37,7 +38,7 @@ public class Main {
     System.out.println("// Export to GraphViz...");
     var outputDir = "exports";
     var path = Paths.get(outputDir, name + ".dot").toString();
-    new DotExporter(res,path,name).export();
+    new DotExporter(res, path, name).export();
 
     System.out.println("// Export to GOAL...");
     boolean simplifyTransitions = true;
@@ -45,7 +46,7 @@ public class Main {
     var goalExporter = new GoalExporter(res, path, name, simplifyTransitions);
     goalExporter.export();
 
-    writeCompressedPaths(name+".csv", null, res, "exports");
+    writeCompressedPaths(name + ".csv", null, res, "exports");
     System.out.println("// done");
   }
 
@@ -72,7 +73,11 @@ public class Main {
       MapperResult.GraphPaths2BEventPaths(graphPaths)
           .parallelStream()
           .map(l -> l.stream()
-              .map(BEvent::getName)
+              .map(e -> {
+                if (e.name.equals("X") || e.name.equals("O")) {
+                  return e.name + "(" + ((Map<String, Object>) e.maybeData).get("row") + "," + ((Map<String, Object>) e.maybeData).get("col") + ")";
+                } else return e.name;
+              })
 //            .filter(s -> !List.of("KeepDown", "ClosingRequest", "OpeningRequest").contains(s))
               .collect(Collectors.joining(",", "", "\n")))
           .distinct()
