@@ -2,7 +2,7 @@
 ctx.populateContext([
   ctx.Entity('r1', 'room', {subtype: 'kitchen'}),
   ctx.Entity('r2', 'room', {subtype: 'bedroom'}),
-  // ctx.Entity('r3', 'room', {subtype: 'bathroom'}),
+  ctx.Entity('r3', 'room', {subtype: 'bathroom'}),
 ])
 
 // Specifies the contexts/layers preconditions
