@@ -53,8 +53,8 @@ for (var r = 0; r < 3; r++) {
 }
 bp.registerBThread('EnforceTurns', function () {
   while (true) {
-    bp.sync({ waitFor: Omove, block: Xmove })
     bp.sync({ waitFor: Xmove, block: Omove })
+    bp.sync({ waitFor: Omove, block: Xmove })
   }
 })
 
