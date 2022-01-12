@@ -26,6 +26,19 @@ public class Main {
   private BProgram bprog;
   private Example example = null;
 
+  public static void main(String[] args) throws Exception {
+    var main = new Main();
+    System.out.println("// start");
+
+    main.createBProgam();
+
+//    main.runProgram();
+//    main.verify();
+    main.mapSpace();
+
+    System.out.println("// done");
+  }
+
   private void createBProgam() {
     //region Load example program
     example = Example.TicTacToeWithoutUI;
@@ -44,19 +57,6 @@ public class Main {
      bprog.setEventSelectionStrategy(new PrioritizedBSyncEventSelectionStrategy());
      */
     //endregion
-  }
-
-  public static void main(String[] args) throws Exception {
-    var main = new Main();
-    System.out.println("// start");
-
-    main.createBProgam();
-
-//    main.runProgram();
-//    main.verify();
-    main.mapSpace();
-
-    System.out.println("// done");
   }
 
   private void verify() throws IOException {
