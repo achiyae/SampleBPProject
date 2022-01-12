@@ -49,7 +49,7 @@ bthread('EnforceTurnsXO', function () {
 // Represents when the game ends
 bthread('block moves on endgame', function () {
   sync({ waitFor: EndGame })
-  if (isDefinedAndNotNull(use_accepting_states)) {
+  if (typeof use_accepting_states !== 'undefined' && use_accepting_states != null) {
     AcceptingState.Stopping() // or AcceptingState.Continuing()
   }
   sync({ block: bp.all })
