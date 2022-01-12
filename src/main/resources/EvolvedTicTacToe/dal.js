@@ -61,7 +61,7 @@ bp.registerBThread('EnforceTurns', function () {
 // Represents when the game ends
 bp.registerBThread('EndOfGame', function () {
   bp.sync({ waitFor: gameOver })
-  if (use_accepting_states) {
+  if (isDefinedAndNotNull(use_accepting_states)) {
     AcceptingState.Stopping() // or AcceptingState.Continuing()
   }
   bp.sync({ block: bp.all })
