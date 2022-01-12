@@ -49,7 +49,7 @@ bthread('EnforceTurnsXO', function () {
 // Represents when the game ends
 bthread('block moves on endgame', function () {
   sync({ waitFor: EndGame })
-  if(use_accepting_states) {
+  if(typeof use_accepting_states !== 'undefined') {
     AcceptingState.Stopping() // or AcceptingState.Continuing()
   }
   sync({ block: bp.all })
@@ -167,8 +167,4 @@ ctx.bthread('O doesnt miss win', 'Line.All', function (l) {
 bthread('NoXWin', function () {
   sync({ waitFor: bp.Event('XWin') })
   bp.ASSERT(false, 'Found a trace where X wins.')
-})
-
-ctx.bthread('Simulate X', 'Cell.All', function (c) {
-  sync({ request: Event('X', c.location) })
 })

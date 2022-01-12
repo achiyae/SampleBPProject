@@ -40,13 +40,14 @@ public class Example {
   }
 
   public void initializeRunner(BProgramRunner runner) {
-    if (runner != null && rnrConsumer != null)
+    if (rnrConsumer != null)
       rnrConsumer.accept(runner);
   }
 
   public void initializeExecution(BProgram bProgram, BProgramRunner runner) {
     initializeBProg(bProgram);
-    initializeRunner(runner);
+    if (runner != null)
+      initializeRunner(runner);
   }
 
   public void addVerificationResources(BProgram bprog) throws IOException {
