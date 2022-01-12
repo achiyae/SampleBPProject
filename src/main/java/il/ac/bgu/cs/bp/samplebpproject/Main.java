@@ -87,7 +87,9 @@ public class Main {
 
   private void runProgram() {
     var rnr = new BProgramRunner(bprog);
-    example.initializeRunner(rnr);
+    if(example != null) {
+      example.initializeRunner(rnr);
+    }
     rnr.run();
   }
 
