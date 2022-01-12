@@ -4,6 +4,7 @@ import il.ac.bgu.cs.bp.bpjs.analysis.DfsBProgramVerifier;
 import il.ac.bgu.cs.bp.bpjs.analysis.listeners.PrintDfsVerifierListener;
 import il.ac.bgu.cs.bp.bpjs.context.ContextBProgram;
 import il.ac.bgu.cs.bp.bpjs.execution.BProgramRunner;
+import il.ac.bgu.cs.bp.bpjs.execution.listeners.PrintBProgramRunnerListener;
 import il.ac.bgu.cs.bp.bpjs.model.*;
 import il.ac.bgu.cs.bp.statespacemapper.MapperResult;
 import il.ac.bgu.cs.bp.statespacemapper.StateSpaceMapper;
@@ -33,7 +34,7 @@ public class Main {
     main.createBProgam();
 
 //    main.runProgram();
-//    main.verify();
+//    main.verifyProgram();
     main.mapSpace();
 
     System.out.println("// done");
@@ -59,7 +60,7 @@ public class Main {
     //endregion
   }
 
-  private void verify() throws IOException {
+  private void verifyProgram() throws IOException {
     if (example != null) {
       example.addVerificationResources(bprog);
     }
@@ -89,6 +90,8 @@ public class Main {
     var rnr = new BProgramRunner(bprog);
     if(example != null) {
       example.initializeRunner(rnr);
+    } else {
+      rnr.addListener(new PrintBProgramRunnerListener());
     }
     rnr.run();
   }
