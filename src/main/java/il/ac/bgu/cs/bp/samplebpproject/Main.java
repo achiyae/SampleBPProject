@@ -6,6 +6,7 @@ import il.ac.bgu.cs.bp.bpjs.context.ContextBProgram;
 import il.ac.bgu.cs.bp.bpjs.execution.BProgramRunner;
 import il.ac.bgu.cs.bp.bpjs.execution.listeners.PrintBProgramRunnerListener;
 import il.ac.bgu.cs.bp.bpjs.model.*;
+import il.ac.bgu.cs.bp.bpjs.model.eventselection.PrioritizedBSyncEventSelectionStrategy;
 
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -35,14 +36,11 @@ public class Main {
     //endregion
 
     //region Load non-sample program
-    /*
     // To load non-sample program (i.e., for example the program <Project>/src/main/resources/HelloBPjsWorld.js)
      this.bprog = new ContextBProgram("HelloBPjsWorld.js"); // you can add more files
-     this.name = "HelloBPjsWorld";
 
     // You can use a different EventSelectionStrategy, for example:
      bprog.setEventSelectionStrategy(new PrioritizedBSyncEventSelectionStrategy());
-     */
     //endregion
   }
 
