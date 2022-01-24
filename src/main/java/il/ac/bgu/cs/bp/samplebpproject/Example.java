@@ -3,6 +3,7 @@ package il.ac.bgu.cs.bp.samplebpproject;
 import il.ac.bgu.cs.bp.bpjs.execution.BProgramRunner;
 import il.ac.bgu.cs.bp.bpjs.execution.listeners.PrintBProgramRunnerListener;
 import il.ac.bgu.cs.bp.bpjs.model.BProgram;
+import il.ac.bgu.cs.bp.bpjs.model.eventselection.PrioritizedBSyncEventSelectionStrategy;
 import il.ac.bgu.cs.bp.samplebpproject.HotCold.HotColdActuator;
 import il.ac.bgu.cs.bp.samplebpproject.TicTacToe.TicTacToeGameMain;
 
@@ -18,6 +19,8 @@ public class Example {
       bprog -> TicTacToeGameMain.initBProg(bprog, true), TicTacToeGameMain::initRNR);
   public static final Example TicTacToeWithoutUI = new Example("TicTacToe",
       bprog -> TicTacToeGameMain.initBProg(bprog, false), TicTacToeGameMain::initRNR);
+  public static final Example EvolvedTicTacToe = new Example("TicTacToe",
+      bprog -> bprog.setEventSelectionStrategy(new PrioritizedBSyncEventSelectionStrategy()), null);
   public static final Example HotCold = new Example("HotCold", null, rnr -> rnr.addListener(new HotColdActuator()));
   public static final Example SampleProgram = new Example("SampleProgram");
 
@@ -44,7 +47,6 @@ public class Example {
   public void initializeRunner(BProgramRunner runner) {
     if (rnrConsumer != null)
       rnrConsumer.accept(runner);
-    runner.addListener(new PrintBProgramRunnerListener());
   }
 
   public void addVerificationResources(BProgram bprog) throws IOException {
