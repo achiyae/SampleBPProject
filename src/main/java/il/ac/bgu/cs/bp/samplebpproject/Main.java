@@ -37,10 +37,10 @@ public class Main {
 
     //region Load non-sample program
     // To load non-sample program (i.e., for example the program <Project>/src/main/resources/HelloBPjsWorld.js)
-     this.bprog = new ContextBProgram("HelloBPjsWorld.js"); // you can add more files
+//     this.bprog = new ContextBProgram("HelloBPjsWorld.js"); // you can add more files
 
     // You can use a different EventSelectionStrategy, for example:
-     bprog.setEventSelectionStrategy(new PrioritizedBSyncEventSelectionStrategy());
+//     bprog.setEventSelectionStrategy(new PrioritizedBSyncEventSelectionStrategy());
     //endregion
   }
 
