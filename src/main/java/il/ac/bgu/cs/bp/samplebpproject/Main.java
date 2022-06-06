@@ -2,6 +2,7 @@ package il.ac.bgu.cs.bp.samplebpproject;
 
 import il.ac.bgu.cs.bp.bpjs.model.BProgram;
 import il.ac.bgu.cs.bp.bpjs.model.ResourceBProgram;
+import il.ac.bgu.cs.bp.bpjs.model.eventselection.PrioritizedBSyncEventSelectionStrategy;
 import il.ac.bgu.cs.bp.statespacemapper.MapperResult;
 import il.ac.bgu.cs.bp.statespacemapper.StateSpaceMapper;
 import il.ac.bgu.cs.bp.statespacemapper.jgrapht.exports.DotExporter;
@@ -30,7 +31,7 @@ public class Main {
     writeGraphs(res, runName);
 
     // Generates a compressed file with all possible paths. Could be huge.
-    // writeCompressedPaths(runName + ".csv", null, res, "exports");
+     writeCompressedPaths(runName + ".csv", null, res, "exports");
 
     System.out.println("// done");
   }
@@ -38,11 +39,11 @@ public class Main {
   private static BProgram createBProgram() {
     // This will load the program file  <Project>/src/main/resources/HelloBPjsWorld.js
     // final BProgram bprog = new ResourceBProgram("DiningPhilosophers.js");
-    final BProgram bprog = new ResourceBProgram("HelloBPjsWorld.js");
+    final BProgram bprog = new ResourceBProgram("TTT.js");
 
     // You can use a different EventSelectionStrategy, for example:
-    /* var ess = new PrioritizedBSyncEventSelectionStrategy();
-    bprog.setEventSelectionStrategy(ess); */
+     var ess = new PrioritizedBSyncEventSelectionStrategy();
+    bprog.setEventSelectionStrategy(ess);
 
     return bprog;
   }
