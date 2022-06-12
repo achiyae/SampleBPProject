@@ -10,7 +10,7 @@
     <version>0.6-DEV</version>
     <packaging>jar</packaging>
     <properties>
-        <exec.mainClass>il.ac.bgu.cs.bp.samplebpproject.levelCrossing.LevelCrossingMain</exec.mainClass>
+        <exec.mainClass>il.ac.bgu.cs.bp.samplebpproject.Main</exec.mainClass>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
