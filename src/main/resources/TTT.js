@@ -1,14 +1,14 @@
 bp.log.info('Tic-Tac-Toe - Let the game begin!')
 
-const AnyX = bp.EventSet('AnyX', function (e) {
-  return e.name.startsWith('X')
+var AnyX = bp.EventSet('AnyX', function (e) {
+  return e.name.startsWith('X(')
 })
-const AnyO = bp.EventSet('AnyO', function (e) {
-  return e.name.startsWith('O')
+var AnyO = bp.EventSet('AnyO', function (e) {
+  return e.name.startsWith('O(')
 })
 
-const move = bp.EventSet('Move events', function (e) {
-  return e.name.startsWith('O') || e.name.startsWith('X')
+var move = bp.EventSet('Move events', function (e) {
+  return e.name.startsWith('O(') || e.name.startsWith('X(')
 })
 
 function X(row, col) {
@@ -22,7 +22,7 @@ function O(row, col) {
 StaticEvents = {
   'OWin': bp.Event('OWin'),
   'XWin': bp.Event('XWin'),
-  'draw': bp.Event('draw')
+  'draw': bp.Event('Draw')
 }
 
 // GameRules:
@@ -54,6 +54,9 @@ bp.registerBThread('EnforceTurns', function () {
 // Represents when the game ends
 bp.registerBThread('EndOfGame', function () {
   bp.sync({ waitFor: [StaticEvents.OWin, StaticEvents.XWin, StaticEvents.draw] })
+  if (typeof use_accepting_states !== 'undefined') {
+    AcceptingState.Stopping() // or AcceptingState.Continuing()
+  }
   bp.sync({ block: bp.all })
 })
 
@@ -67,22 +70,20 @@ bp.registerBThread('DetectDraw', function () {
   bp.sync({ request: [StaticEvents.draw] }, 90)
 })
 
-function addLineBThreads(l) {
+function addLineBThreads(xline, oline) {
 
   bp.registerBThread('DetectXWin', function () {
-    const line = l.map(c => X(c.x, c.y))
-    bp.sync({ waitFor: line })
-    bp.sync({ waitFor: line })
-    bp.sync({ waitFor: line })
+    bp.sync({ waitFor: xline })
+    bp.sync({ waitFor: xline })
+    bp.sync({ waitFor: xline })
 
     bp.sync({ request: [StaticEvents.XWin] }, 100)
   })
 
   bp.registerBThread('DetectOWin', function () {
-    const line = l.map(c => O(c.x, c.y))
-    bp.sync({ waitFor: line })
-    bp.sync({ waitFor: line })
-    bp.sync({ waitFor: line })
+    bp.sync({ waitFor: oline })
+    bp.sync({ waitFor: oline })
+    bp.sync({ waitFor: oline })
 
     bp.sync({ request: [StaticEvents.OWin] }, 100)
   })
@@ -90,18 +91,15 @@ function addLineBThreads(l) {
 
   // Player O strategy to add a the third O to win
   bp.registerBThread('AddThirdO', function () {
-    const line = l.map(c => O(c.x, c.y))
-    bp.sync({ waitFor: line })
-    bp.sync({ waitFor: line })
-    bp.sync({ waitFor: line }, 50)
+    bp.sync({ waitFor: oline })
+    bp.sync({ waitFor: oline })
+    bp.sync({ request: oline }, 50)
   })
 
   bp.registerBThread('PreventThirdX', function () {
-    const lineX = l.map(c => X(c.x, c.y))
-    const lineO = l.map(c => O(c.x, c.y))
-    bp.sync({ waitFor: lineX })
-    bp.sync({ waitFor: lineX })
-    bp.sync({ request: lineO }, 40)
+    bp.sync({ waitFor: xline })
+    bp.sync({ waitFor: xline })
+    bp.sync({ request: oline }, 40)
   })
 
 }
@@ -119,33 +117,29 @@ var lines = [[{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }],
 
 
 lines.forEach(function (l) {
-  addLineBThreads(l)
+  addLineBThreads(l.map(c => X(c.x, c.y)), l.map(c => O(c.x, c.y)))
 })
 
-function addFork22PermutationBthreads(f) {
+function addFork22PermutationBthreads(fork) {
   // Player O strategy to prevent the Fork22 of player X
   bp.registerBThread('PreventFork22X', function () {
-    const fork = f.map(c => X(c.x, c.y))
     bp.sync({ waitFor: fork })
     bp.sync({ waitFor: fork })
     bp.sync({ request: [O(2, 2), O(0, 2), O(2, 0)] }, 30)
   })
 }
 
-function addFork02PermutationBthreads(f) {
+function addFork02PermutationBthreads(fork) {
   // Player O strategy to prevent the Fork02 of player X
   bp.registerBThread('PreventFork02X', function () {
-    const fork = f.map(c => X(c.x, c.y))
     bp.sync({ waitFor: fork })
     bp.sync({ waitFor: fork })
     bp.sync({ request: [O(0, 2), O(0, 0), O(2, 2)] }, 30)
   })
 }
 
-function addFork20PermutationBthreads(f) {
-  // Player O strategy to prevent the Fork20 of player X
+function addFork20PermutationBthreads(fork) {
   bp.registerBThread('PreventFork20X', function () {
-      const fork = f.map(c => X(c.x, c.y))
       bp.sync({ waitFor: fork })
       bp.sync({ waitFor: fork })
 
@@ -154,20 +148,16 @@ function addFork20PermutationBthreads(f) {
   )
 }
 
-function addFork00PermutationBthreads(f) {
-  // Player O strategy to prevent the Fork00 of player X
+function addFork00PermutationBthreads(fork) {
   bp.registerBThread('PreventFork00X', function () {
-    const fork = f.map(c => X(c.x, c.y))
     bp.sync({ waitFor: fork })
     bp.sync({ waitFor: fork })
     bp.sync({ request: [O(0, 0), O(0, 2), O(2, 0)] }, 30)
   })
 }
 
-function addForkdiagPermutationBthreads(f) {
-  // Player O strategy to prevent the Forkdiagonal of player X
+function addForkdiagPermutationBthreads(fork) {
   bp.registerBThread('PreventForkdiagX', function () {
-    const fork = f.map(c => X(c.x, c.y))
     bp.sync({ waitFor: fork })
     bp.sync({ waitFor: fork })
     bp.sync({ request: [O(0, 1), O(1, 0), O(1, 2), O(2, 1)] }, 30)
@@ -182,23 +172,23 @@ var forks00 = [[{ x: 0, y: 1 }, { x: 2, y: 0 }], [{ x: 1, y: 0 }, { x: 0, y: 2 }
 var forksdiag = [[{ x: 0, y: 2 }, { x: 2, y: 0 }], [{ x: 0, y: 0 }, { x: 2, y: 2 }]]
 
 forks22.forEach(function (f) {
-  addFork22PermutationBthreads(f)
+  addFork22PermutationBthreads(f.map(c => X(c.x, c.y)))
 })
 
 forks02.forEach(function (f) {
-  addFork02PermutationBthreads(f)
+  addFork02PermutationBthreads(f.map(c => X(c.x, c.y)))
 })
 
 forks20.forEach(function (f) {
-  addFork20PermutationBthreads(f)
+  addFork20PermutationBthreads(f.map(c => X(c.x, c.y)))
 })
 
 forks00.forEach(function (f) {
-  addFork00PermutationBthreads(f)
+  addFork00PermutationBthreads(f.map(c => X(c.x, c.y)))
 })
 
 forksdiag.forEach(function (f) {
-  addForkdiagPermutationBthreads(f)
+  addForkdiagPermutationBthreads(f.map(c => X(c.x, c.y)))
 })
 
 // Preference to put O on the center
@@ -228,6 +218,7 @@ bp.registerBThread('Simulate X', function () {
       cells.push(X(i, j))
     }
   }
+
   while (true) {
     bp.sync({ request: cells })
   }
