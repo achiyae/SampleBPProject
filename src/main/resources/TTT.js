@@ -11,10 +11,6 @@ const move = bp.EventSet('Move events', function (e) {
   return e.name.startsWith('O') || e.name.startsWith('X')
 })
 
-function Click(row, col) {
-  return bp.Event('Click(' + row + ',' + col + ')')
-}
-
 function X(row, col) {
   return bp.Event('X(' + row + ',' + col + ')')
 }
@@ -33,12 +29,6 @@ StaticEvents = {
 
 // This BThreads are on each square of the grid
 function addSquareBThreads(row, col) {
-
-  // Detects mouse click
-  bp.registerBThread('ClickHandler(' + row + ',' + col + ')', function () {
-    bp.sync({ waitFor: Click(row, col) })
-    bp.sync({ request: [X(row, col)] })
-  })
 
   // Blocks further marking of a square already marked by X or O.
   bp.registerBThread('SquareTaken(' + row + ',' + col + ')', function () {
@@ -64,7 +54,7 @@ bp.registerBThread('EnforceTurns', function () {
 // Represents when the game ends
 bp.registerBThread('EndOfGame', function () {
   bp.sync({ waitFor: [StaticEvents.OWin, StaticEvents.XWin, StaticEvents.draw] })
-  bp.sync({ block: move })
+  bp.sync({ block: bp.all })
 })
 
 
@@ -235,7 +225,7 @@ bp.registerBThread('Simulate X', function () {
   var cells = []
   for (var i = 0; i < 3; i++) {
     for (var j = 0; j < 3; j++) {
-      cells.push(Click(i, j))
+      cells.push(X(i, j))
     }
   }
   while (true) {
