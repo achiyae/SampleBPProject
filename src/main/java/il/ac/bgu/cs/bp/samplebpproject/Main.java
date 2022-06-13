@@ -8,7 +8,7 @@ import il.ac.bgu.cs.bp.bpjs.model.eventselection.PrioritizedBSyncEventSelectionS
 public class Main {
   public static void main(String[] args) throws Exception {
     // This will load the program file  <Project>/src/main/resources/HelloBPjsWorld.js
-    final BProgram bprog = new ResourceBProgram("DiningPhilosophers.js");
+    final BProgram bprog = new ResourceBProgram("TTT.js");
     var ess = new PrioritizedBSyncEventSelectionStrategy();
     ess.setDefaultPriority(0);
     bprog.setEventSelectionStrategy(ess);
