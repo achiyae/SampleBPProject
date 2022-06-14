@@ -120,11 +120,19 @@ lines.forEach(function (l) {
   addLineBThreads(l.map(c => X(c.x, c.y)), l.map(c => O(c.x, c.y)))
 })
 
-function addForkBThread(X,O) {
+function addBlockForkBThread(X,O) {
   bp.registerBThread('PreventFork', function () {
     bp.sync({ waitFor: X })
     bp.sync({ waitFor: X })
     bp.sync({ request: O }, 30)
+  })
+}
+
+function addWinForkBThread(X,O) {
+  bp.registerBThread('PreventFork', function () {
+    bp.sync({ waitFor: X })
+    bp.sync({ waitFor: X })
+    bp.sync({ request: O }, 34)
   })
 }
 
@@ -138,7 +146,8 @@ var forks = [forks22,forks02, forks20, forks00, forksdiag]
 
 forks.forEach(function (f) {
   f.X.forEach(function (x) {
-    addForkBThread(x.map(c => X(c.x, c.y)),f.O.map(c => O(c.x, c.y)))
+    addBlockForkBThread(x.map(c => X(c.x, c.y)),f.O)
+    addWinForkBThread(x.map(c => O(c.x, c.y)),f.O)
   })
 })
 
