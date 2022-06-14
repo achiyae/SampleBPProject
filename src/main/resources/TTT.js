@@ -134,11 +134,11 @@ var forks20 = { X: [[{ x: 1, y: 0 }, { x: 2, y: 2 }], [{ x: 2, y: 1 }, { x: 0, y
 var forks00 = { X: [[{ x: 0, y: 1 }, { x: 2, y: 0 }], [{ x: 1, y: 0 }, { x: 0, y: 2 }], [{ x: 0, y: 1 }, { x: 1, y: 0 }]],O:[O(0, 0), O(0, 2), O(2, 0)] }
 var forksdiag = { X: [[{ x: 0, y: 2 }, { x: 2, y: 0 }], [{ x: 0, y: 0 }, { x: 2, y: 2 }]],O:[O(0, 1), O(1, 0), O(1, 2), O(2, 1)]}
 
-var forks = forks22.concat(forks02, forks20, forks00, forksdiag)
+var forks = [forks22,forks02, forks20, forks00, forksdiag]
 
 forks.forEach(function (f) {
-  f.X.forEach(function (X) {
-    addForkBThread(X.map(c => X(c.x, c.y)),f.O.map(c => O(c.x, c.y)))
+  f.X.forEach(function (x) {
+    addForkBThread(x.map(c => X(c.x, c.y)),f.O.map(c => O(c.x, c.y)))
   })
 })
 
