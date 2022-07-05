@@ -154,9 +154,9 @@ public class LevelCrossingMain {
     importer.setVertexWithAttributesFactory(MapperVertexExtended::new);
     importer.setEdgeWithAttributesFactory(MapperEdgeExtended::new);
     importer.importGraph(graph, new File(dotFile));
-    var startVertex = graph.vertexSet().stream().filter(v -> ((MapperVertexExtended) v).start).findFirst().get();
-    var acceptingVertices = graph.vertexSet().stream().filter(v -> ((MapperVertexExtended) v).accepting).collect(Collectors.toSet());
-    return new PNMapperResults(graph, startVertex, acceptingVertices);
+    /*var startVertex = graph.vertexSet().stream().filter(v -> ((MapperVertexExtended) v).start).findFirst().get();
+    var acceptingVertices = graph.vertexSet().stream().filter(v -> ((MapperVertexExtended) v).accepting).collect(Collectors.toSet());*/
+    return new PNMapperResults(graph);
   }
 
   private static void generatePaths(String csvName, Integer maxPathLength, String outputDir) throws IOException {
@@ -246,8 +246,8 @@ public class LevelCrossingMain {
   }
 
   private static class PNMapperResults extends MapperResult {
-    private PNMapperResults(Graph<MapperVertex, MapperEdge> graph, MapperVertex startNode, Set<MapperVertex> acceptingStates) {
-      super(graph, startNode, acceptingStates);
+    private PNMapperResults(Graph<MapperVertex, MapperEdge> graph) {
+      super(graph);
     }
 
     public static PNMapperResults removeHelperEvents(MapperResult base) {
@@ -289,7 +289,7 @@ public class LevelCrossingMain {
         if (zeroInDegree.isEmpty()) break;
         graph.removeAllVertices(zeroInDegree);
       }
-      var res = new PNMapperResults(graph, startNode, graph.vertexSet());
+      var res = new PNMapperResults(graph);
       logger.info(res.toString());
       return res;
     }
