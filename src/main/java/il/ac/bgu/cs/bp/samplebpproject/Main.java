@@ -3,6 +3,7 @@ package il.ac.bgu.cs.bp.samplebpproject;
 import il.ac.bgu.cs.bp.bpjs.model.BEvent;
 import il.ac.bgu.cs.bp.bpjs.model.BProgram;
 import il.ac.bgu.cs.bp.bpjs.model.ResourceBProgram;
+import il.ac.bgu.cs.bp.samplebpproject.levelCrossing.LevelCrossingMain;
 import il.ac.bgu.cs.bp.statespacemapper.MapperResult;
 import il.ac.bgu.cs.bp.statespacemapper.StateSpaceMapper;
 import il.ac.bgu.cs.bp.statespacemapper.jgrapht.exports.DotExporter;
@@ -15,6 +16,16 @@ import java.util.stream.Collectors;
 
 public class Main {
   public static void main(String[] args) throws Exception {
+    if(args.length<1) {
+      System.out.println("The first argument must include the js filename");
+    }
+    if(args[0].startsWith("levelCrossing/")) {
+      LevelCrossingMain.main(args);
+    } else {
+      mainForNonLC(args);
+    }
+  }
+  public static void mainForNonLC(String[] args) throws Exception {
     // This will load the program file  <Project>/src/main/resources/HelloBPjsWorld.js
 //    final BProgram bprog = new ResourceBProgram("DiningPhilosophers.js");
     final BProgram bprog = new ResourceBProgram("HelloBPjsWorld.js");
