@@ -212,14 +212,12 @@ public class LevelCrossingMain {
     logger.info("// Export to GraphViz...");
     var path = Paths.get(outputDir, runName + ".dot").toString();
     Exporter exporter = new DotExporter(res, path, runName);
-    exporter.setEdgeAttributeProvider(v -> Map.of(
-        "label", DefaultAttribute.createAttribute(v.event.toString())
-    ));
     exportGraph(exporter);
 
     logger.info("// Export to GOAL...");
     path = Paths.get(outputDir, runName + ".gff").toString();
     exporter = new GoalExporter(res, path, runName, true);
+
     exportGraph(exporter);
   }
 
@@ -230,6 +228,15 @@ public class LevelCrossingMain {
       map.remove("store");
       map.remove("statements");
       map.remove("bthreads");
+      return map;
+    });
+    exporter.setEdgeAttributeProvider(v -> Map.of(
+            "Label", DefaultAttribute.createAttribute(v.event.toString())
+    ));
+    var graphProvider = exporter.getGraphAttributeProvider();
+    exporter.setGraphAttributeProvider(() -> {
+      var map = graphProvider.get();
+      map.remove("AboveTransition");
       return map;
     });
     exporter.export();

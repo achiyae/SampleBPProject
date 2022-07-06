@@ -152,6 +152,15 @@ public class Main {
       map.remove("bthreads");
       return map;
     });
+    exporter.setEdgeAttributeProvider(v -> Map.of(
+            "Label", DefaultAttribute.createAttribute(v.event.toString())
+    ));
+    var graphProvider = exporter.getGraphAttributeProvider();
+    exporter.setGraphAttributeProvider(() -> {
+      var map = graphProvider.get();
+      map.remove("AboveTransition");
+      return map;
+    });
     exporter.export();
   }
 
