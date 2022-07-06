@@ -95,3 +95,13 @@ for (let c = 1; c <= PHILOSOPHER_COUNT; c++) {
   })
 }*/
 
+bp.registerBThread('mark state as accepting', function () {
+  while (true) {
+    if (use_accepting_states) {
+      AcceptingState.Continuing()
+      // AcceptingState.Stopping()
+    }
+    bp.sync({ waitFor: bp.all })
+  }
+})
+

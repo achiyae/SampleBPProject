@@ -37,20 +37,6 @@ public class LevelCrossingMain {
   private static Logger logger = Logger.getLogger(LevelCrossingMain.class.getName());
   private static MapperResult res = null;
 
-  // Program arguments =
-  //    args[0] = lc_bp | lc_pn | lc_bp_faults | lc_pn_faults
-  //    args[1] = number of railways
-  //    args[2] (optional) = max path length
-  // For example: args = ["lc_pn", "3", "14"]
-
-  // To start from a ready dot file and only generate the paths:
-  // 1) the first parameter must be the path to the dot file
-  // 2) the rest of the parameters are the same as before, only shifted one to the right. For example:
-  //    args[0] = path to dot file
-  //    args[1] = lc_bp | lc_pn | lc_bp_faults | lc_pn_faults
-  //    args[2] = number of railways
-  //    args[3] (optional) = max path length
-  // For example: args = ["exports/lc_bp_R-3.dot", "lc_pn", "3", "14"]
   public static void main(String[] args) throws Exception {
     setupLogger();
     logger.info("Args: " + Arrays.toString(args) + "\n");
@@ -59,16 +45,38 @@ public class LevelCrossingMain {
       dotFile = args[0];
       args = Arrays.copyOfRange(args, 1, args.length);
     }
-    var railways = Integer.parseInt(args[1]);
-    var filename = "levelCrossing/" + args[0] + ".js";
-    var runName = args[0] + "_R-" + railways;
+    int railways;
+    if (args[1] == null){
+      railways = 1;
+    } else {
+      railways = Integer.parseInt(args[1]);
+    }
+    String filename = null;
+    String runName = null;
+    if (args[0].equals("BP")){
+      if (args[4] == null){
+        filename = "levelCrossing/" + "lc_bp" + ".js";
+        runName = "lc_bp" + "_R-" + railways;
+      } else {
+        filename = "levelCrossing/" + "lc_bp_faults" + ".js";
+        runName = "lc_bp_faults" + "_R-" + railways;
+      }
+    } else {
+      if (args[4] == null){
+        filename = "levelCrossing/" + "lc_pn" + ".js";
+        runName = "lc_pn" + "_R-" + railways;
+      } else {
+        filename = "levelCrossing/" + "lc_pn_faults" + ".js";
+        runName = "lc_pn_faults" + "_R-" + railways;
+      }
+    }
     var csvName = runName + ".csv";
     var outputDir = "exports";
-    Integer maxPathLength = null;
-    if (args.length == 3) {
-      maxPathLength = Integer.valueOf(args[2]);
-      csvName = runName + "_L-" + maxPathLength + ".csv";
-    }
+//    Integer maxPathLength = null;
+//    if (args.length == 3) {
+//      maxPathLength = Integer.valueOf(args[2]);
+//      csvName = runName + "_L-" + maxPathLength + ".csv";
+//    }
 
     printJVMStats();
 
@@ -76,7 +84,7 @@ public class LevelCrossingMain {
       res = mapSpace(railways, filename);
       exportGraph(outputDir, runName);
 
-      if (runName.startsWith("lc_pn")) {
+      if (runName.startsWith("lc_pn") && args[3] != null) {
 //        findProblemEquals(res);
         res = PNMapperResults.removeHelperEvents(res);
         exportGraph(outputDir, runName + "_compressed");
@@ -84,8 +92,11 @@ public class LevelCrossingMain {
     } else {
       res = importStateSpace(dotFile);
     }
-    if (railways < 3 || (railways < 4 && !runName.contains("faults"))) {
-      generatePaths(csvName, maxPathLength, outputDir);
+//    if (railways < 3 || (railways < 4 && !runName.contains("faults"))) {
+//      generatePaths(csvName, maxPathLength, outputDir);
+//    }
+    if (args[2] == null) {
+      generatePaths(csvName, 20, outputDir); // can increase maxPathLength
     }
 
     logger.info("// done");
