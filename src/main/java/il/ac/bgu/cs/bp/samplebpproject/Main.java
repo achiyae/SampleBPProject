@@ -9,6 +9,7 @@ import il.ac.bgu.cs.bp.bpjs.model.*;
 import il.ac.bgu.cs.bp.statespacemapper.MapperResult;
 import il.ac.bgu.cs.bp.statespacemapper.StateSpaceMapper;
 import il.ac.bgu.cs.bp.statespacemapper.jgrapht.exports.DotExporter;
+import il.ac.bgu.cs.bp.statespacemapper.jgrapht.exports.Exporter;
 import il.ac.bgu.cs.bp.statespacemapper.jgrapht.exports.GoalExporter;
 import org.jgrapht.GraphPath;
 
@@ -42,7 +43,7 @@ public class Main {
 
   private void createBProgam() {
     //region Load example program
-    example = Example.TicTacToeWithoutUI;
+    example = Example.HotCold;
     this.bprog = new ContextBProgram(example.getResourcesNames());
     example.initializeBProg(bprog);
     this.name = example.name;
@@ -110,17 +111,22 @@ public class Main {
 //    writeCompressedPaths(name + ".csv", null, res, "exports");
   }
 
+  private Exporter formatExporter(Exporter e){
+    e.setVertexAttributeProvider(mapperVertex -> Map.of());
+    return e;
+  }
+
   private void writeGraphs(MapperResult res) throws IOException {
     System.out.println("// Export to GraphViz...");
     var outputDir = "exports";
     var path = Paths.get(outputDir, name + ".dot").toString();
-    new DotExporter(res, path, name).export();
+    formatExporter(new DotExporter(res, path, name)).export();
 
     System.out.println("// Export to GOAL...");
     boolean simplifyTransitions = true;
     path = Paths.get(outputDir, name + ".gff").toString();
     var goalExporter = new GoalExporter(res, path, name, simplifyTransitions);
-    goalExporter.export();
+    formatExporter(goalExporter).export();
   }
 
   private void writeCompressedPaths(String csvFileName, Integer maxPathLength, MapperResult res, String outputDir) throws IOException {

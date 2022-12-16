@@ -27,26 +27,13 @@
     <dependencies>
         <dependency>
             <groupId>com.github.bThink-BGU</groupId>
-            <artifactId>BPjs</artifactId>
-            <version>0.12.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.bThink-BGU</groupId>
             <artifactId>StateSpaceMapper</artifactId>
-            <version>0.4.3</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.github.bthink-bgu</groupId>
-                    <artifactId>BPjs</artifactId>
-                </exclusion>
-            </exclusions>
+            <version>0.4.10</version>
         </dependency>
-
         <dependency>
             <groupId>com.github.bThink-BGU</groupId>
             <artifactId>BPjs-Context</artifactId>
-            <version>0.5.4</version>
+            <version>0.6.5</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.github.bthink-bgu</groupId>
@@ -55,15 +42,6 @@
             </exclusions>
         </dependency>
     </dependencies>
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.github.bThink-BGU</groupId>
-                <artifactId>BPjs</artifactId>
-                <version>0.12.1</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
     <build>
         <plugins>
             <plugin>
