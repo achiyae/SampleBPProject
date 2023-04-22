@@ -37,6 +37,7 @@ ctx.bthread('Interleave', 'Room.Kitchen',
 
 ctx.bthread('Simulate Press', 'Room.WithTaps',
   function (entity) {
+    // sync({request: Event('press', entity)})
     while (true) {
       sync({request: Event('press', entity)})
       for (let i = 0; i < 6; i++) {
