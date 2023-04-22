@@ -1,7 +1,6 @@
 package il.ac.bgu.cs.bp.samplebpproject;
 
 import il.ac.bgu.cs.bp.bpjs.execution.BProgramRunner;
-import il.ac.bgu.cs.bp.bpjs.execution.listeners.PrintBProgramRunnerListener;
 import il.ac.bgu.cs.bp.bpjs.model.BProgram;
 import il.ac.bgu.cs.bp.bpjs.model.eventselection.PrioritizedBSyncEventSelectionStrategy;
 import il.ac.bgu.cs.bp.samplebpproject.HotCold.HotColdActuator;
@@ -9,30 +8,29 @@ import il.ac.bgu.cs.bp.samplebpproject.TicTacToe.TicTacToeGameMain;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class Example {
-  public static final Example Chess = new Example("Chess");
-  public static final Example TicTacToeWithUI = new Example("TicTacToe",
+public class SampleDomain {
+  public static final SampleDomain Chess = new SampleDomain("Chess");
+  public static final SampleDomain TicTacToeWithUI = new SampleDomain("TicTacToe",
       bprog -> TicTacToeGameMain.initBProg(bprog, true), TicTacToeGameMain::initRNR);
-  public static final Example TicTacToeWithoutUI = new Example("TicTacToe",
+  public static final SampleDomain TicTacToeWithoutUI = new SampleDomain("TicTacToe",
       bprog -> TicTacToeGameMain.initBProg(bprog, false), TicTacToeGameMain::initRNR);
-  public static final Example EvolvedTicTacToe = new Example("TicTacToe",
+  public static final SampleDomain EvolvedTicTacToe = new SampleDomain("TicTacToe",
       bprog -> bprog.setEventSelectionStrategy(new PrioritizedBSyncEventSelectionStrategy()), null);
-  public static final Example HotCold = new Example("HotCold", null, rnr -> rnr.addListener(new HotColdActuator()));
-  public static final Example SampleProgram = new Example("SampleProgram");
+  public static final SampleDomain HotCold = new SampleDomain("HotCold", null, rnr -> rnr.addListener(new HotColdActuator()));
+  public static final SampleDomain SampleProgram = new SampleDomain("SampleProgram");
 
   public final String name;
   private final Consumer<BProgramRunner> rnrConsumer;
   private final Consumer<BProgram> bprogConsumer;
 
-  private Example(String name) {
+  private SampleDomain(String name) {
     this(name, null, null);
   }
 
-  private Example(String name, Consumer<BProgram> bprogConsumer, Consumer<BProgramRunner> rnrConsumer) {
+  private SampleDomain(String name, Consumer<BProgram> bprogConsumer, Consumer<BProgramRunner> rnrConsumer) {
     this.name = name;
     this.rnrConsumer = rnrConsumer;
     this.bprogConsumer = bprogConsumer;
