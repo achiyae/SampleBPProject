@@ -7,6 +7,7 @@ import il.ac.bgu.cs.bp.bpjs.execution.BProgramRunner;
 import il.ac.bgu.cs.bp.bpjs.execution.listeners.PrintBProgramRunnerListener;
 import il.ac.bgu.cs.bp.bpjs.model.BProgram;
 import il.ac.bgu.cs.bp.statespacemapper.SpaceMapperCliRunner;
+import il.ac.bgu.cs.bp.statespacemapper.StateSpaceMapper;
 
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -41,13 +42,13 @@ public class Main extends SpaceMapperCliRunner {
 //     main.verifyProgram(bprog, sampleDomain);
 
     // map the state space of the program:
-    var map = main.mapSpace(bprog);
+    var mapper = new StateSpaceMapper(bprog, name);
 
     // write the graph to files:
-    main.exportSpace(name, map);
+    mapper.exportSpace();
 
     // Generates a compressed file with all possible paths. Could be huge.
-//    main.writeCompressedPaths(name + ".csv", null, map, "exports");
+//    mapper.writeCompressedPaths(name + ".csv", null, map, "exports");
 
     System.out.println("// done");
   }
