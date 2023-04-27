@@ -44,6 +44,8 @@ public class Main extends SpaceMapperCliRunner {
     // map the state space of the program:
     var mapper = new StateSpaceMapper(bprog, name);
 
+    mapper.mapSpace();
+
     // write the graph to files:
     mapper.exportSpace();
 
