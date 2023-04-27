@@ -6,6 +6,8 @@ import il.ac.bgu.cs.bp.bpjs.context.ContextBProgram;
 import il.ac.bgu.cs.bp.bpjs.execution.BProgramRunner;
 import il.ac.bgu.cs.bp.bpjs.execution.listeners.PrintBProgramRunnerListener;
 import il.ac.bgu.cs.bp.bpjs.model.BProgram;
+import il.ac.bgu.cs.bp.bpjs.model.ResourceBProgram;
+import il.ac.bgu.cs.bp.bpjs.model.eventselection.PrioritizedBSyncEventSelectionStrategy;
 import il.ac.bgu.cs.bp.statespacemapper.SpaceMapperCliRunner;
 import il.ac.bgu.cs.bp.statespacemapper.StateSpaceMapper;
 
@@ -22,24 +24,22 @@ public class Main extends SpaceMapperCliRunner {
     System.out.println("// start");
 
     // load a bprogram of a sample domain
-    sampleDomain = Optional.of(SampleDomain.HotCold);
+    /*sampleDomain = Optional.of(SampleDomain.HotCold);
     bprog = loadSampleDomain(sampleDomain.get());
-    name = sampleDomain.get().name;
+    name = sampleDomain.get().name;*/
 
     // alternatively, load a bprogram from resources
-    /*
     var resources = args.length == 0 ? new String[]{"HelloBPjsWorld.js"} : args;
-    bprog = cli.getBProgram(resources);
+    bprog = new ContextBProgram(resources);
     name = bprog.getName();
     // You can use a different EventSelectionStrategy, for example:
-    bprog.setEventSelectionStrategy(new PrioritizedBSyncEventSelectionStrategy());
-    */
+//    bprog.setEventSelectionStrategy(new PrioritizedBSyncEventSelectionStrategy());
 
     // run the program:
-//     main.runProgram(bprog, sampleDomain);
+//    main.runProgram(bprog, sampleDomain);
 
     // verify the program:
-//     main.verifyProgram(bprog, sampleDomain);
+//    main.verifyProgram(bprog, sampleDomain);
 
     // map the state space of the program:
     var mapper = new StateSpaceMapper(bprog, name);
