@@ -28,12 +28,12 @@
         <dependency>
             <groupId>com.github.bThink-BGU</groupId>
             <artifactId>StateSpaceMapper</artifactId>
-            <version>0.6.1</version>
+            <version>0.6.2</version>
         </dependency>
         <dependency>
             <groupId>com.github.bThink-BGU</groupId>
-            <artifactId>BPjs-Context</artifactId>
-            <version>0.6.12</version>
+            <artifactId>COBPjs</artifactId>
+            <version>0.6.14</version>
         </dependency>
     </dependencies>
     <build>
