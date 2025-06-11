@@ -13,7 +13,7 @@ public class Main {
     System.out.println("// start");
 
     var mpr = new StateSpaceMapper(bprog, runName);
-
+    mpr.mapSpace();
     mpr.exportSpace();
 
 //    mpr.writeCompressedPaths();
@@ -24,7 +24,7 @@ public class Main {
   private static BProgram createBProgram() {
     // This will load the program file  <Project>/src/main/resources/HelloBPjsWorld.js
     // final BProgram bprog = new ResourceBProgram("DiningPhilosophers.js");
-    final BProgram bprog = new ResourceBProgram("TTT.js");
+    final BProgram bprog = new ResourceBProgram("even.js");
 
     // You can use a different EventSelectionStrategy, for example:
      var ess = new PrioritizedBSyncEventSelectionStrategy();
